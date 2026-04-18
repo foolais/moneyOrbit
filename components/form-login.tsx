@@ -24,7 +24,7 @@ const FormLogin = () => {
     <form
       id="login-form"
       onSubmit={form.handleSubmit(onSubmit)}
-      className="w-full flex flex-col gap-2"
+      className="flex w-full flex-col gap-2"
     >
       <FieldGroup className="gap-2">
         <Controller

@@ -30,7 +30,7 @@ export default function RootLayout({
       className={`${abeezee.variable} ${inconsolata.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-stars">
+      <body className="bg-stars flex min-h-full flex-col">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

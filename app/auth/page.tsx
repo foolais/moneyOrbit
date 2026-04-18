@@ -15,16 +15,16 @@ const AuthPage = () => {
   const [isLoginForm, setIsLoginForm] = useState(true);
 
   return (
-    <div className="w-screen h-screen flex flex-col items-center justify-center relative">
-      <div className="w-xs flex flex-col gap-2 relative">
-        <h1 className="text-3xl font-extrabold text-accent stroke-text tracking-widest ml-4">
+    <div className="relative flex h-screen w-screen flex-col items-center justify-center">
+      <div className="relative flex w-xs flex-col gap-2">
+        <h1 className="text-accent stroke-text ml-4 text-3xl font-extrabold tracking-widest">
           Money Orbit
         </h1>
         <Card>
           <div className="flex items-center gap-2 px-4">
             <Button
               size="icon"
-              className="cursor-pointer group"
+              className="group cursor-pointer"
               onClick={() => setIsLoginForm(!isLoginForm)}
             >
               <ArrowLeftRight
@@ -32,18 +32,18 @@ const AuthPage = () => {
                 className="transition-transform duration-300 group-hover:rotate-180"
               />
             </Button>
-            <CardTitle className="font-bold mx-auto text-secondary flex items-center gap-2 ml-8">
+            <CardTitle className="text-secondary mx-auto ml-8 flex items-center gap-2 font-bold">
               Welcome back <Sparkles className="size-5" />
             </CardTitle>
           </div>
           <CardContent>
             {isLoginForm ? <FormLogin /> : <FormRegister />}
           </CardContent>
-          <CardFooter className="w-full p-2 mb-2">
+          <CardFooter className="mb-2 w-full p-2">
             <Button
               form={isLoginForm ? "login-form" : "register-form"}
               variant="secondary"
-              className="rounded-full w-1/2 mx-auto px-4 py-2 cursor-pointer hover:bg-accent/90 hover:scale-105"
+              className="hover:bg-accent/90 mx-auto w-1/2 cursor-pointer rounded-full px-4 py-2 hover:scale-105"
             >
               {isLoginForm ? "login" : "register"} <Send className="size-5" />
             </Button>
@@ -63,7 +63,7 @@ const AuthPage = () => {
         alt="Astronout on Moon"
         width={150}
         height={150}
-        className="absolute top-0 sm:top-5 md:top-10 left-0 sm:left-5 md:left-10 object-cover"
+        className="absolute top-0 left-0 object-cover sm:top-5 sm:left-5 md:top-10 md:left-10"
         loading="eager"
       />
       <Image
@@ -71,7 +71,7 @@ const AuthPage = () => {
         alt="Astronout on Rocket"
         width={150}
         height={150}
-        className="absolute bottom-0 sm:bottom-5 md:bottom-10 right-0 sm:right-5 md:right-10 object-cover"
+        className="absolute right-0 bottom-0 object-cover sm:right-5 sm:bottom-5 md:right-10 md:bottom-10"
         loading="eager"
       />
     </div>

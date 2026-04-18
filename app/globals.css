@@ -9,7 +9,7 @@
 :root {
   --background: rgb(247, 249, 250);
   --foreground: rgb(51, 51, 51);
-  --card: rgb(255, 255, 255);
+  --card: rgb(230, 230, 230);
   --card-foreground: rgb(51, 51, 51);
   --popover: rgb(255, 255, 255);
   --popover-foreground: rgb(51, 51, 51);
@@ -23,8 +23,8 @@
   --accent-foreground: rgb(0, 0, 0);
   --destructive: rgb(239, 68, 68);
   --destructive-foreground: rgb(255, 255, 255);
-  --border: rgb(212, 212, 212);
-  --input: rgb(212, 212, 212);
+  --border: rgb(255, 255, 255);
+  --input: rgb(255, 255, 255);
   --ring: rgb(51, 204, 51);
   --chart-1: rgb(255, 192, 203);
   --chart-2: rgb(135, 206, 235);

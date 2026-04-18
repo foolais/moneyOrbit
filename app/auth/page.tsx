@@ -10,6 +10,7 @@ import AstronoutRocket from "@/public/astronout-rocket.webp";
 import { ArrowLeftRight, Send, Sparkles } from "lucide-react";
 import { useState } from "react";
 import FormRegister from "@/components/form-register";
+import Title from "@/components/title";
 
 const AuthPage = () => {
   const [isLoginForm, setIsLoginForm] = useState(true);
@@ -17,9 +18,7 @@ const AuthPage = () => {
   return (
     <div className="relative flex h-screen w-screen flex-col items-center justify-center">
       <div className="relative flex w-xs flex-col gap-2">
-        <h1 className="text-accent stroke-text ml-4 text-3xl font-extrabold tracking-widest">
-          Money Orbit
-        </h1>
+        <Title className="ml-4" />
         <Card>
           <div className="flex items-center gap-2 px-4">
             <Button

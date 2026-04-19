@@ -1,4 +1,4 @@
-import ContainerTransaction from "@/components/container-transaction";
+import ContainerHomeTransaction from "@/components/container-home-transaction";
 import SidebarAnalytic from "@/components/sidebar-analytic";
 import SidebarAnalyticHeader from "@/components/sidebar-analytic-header";
 import Title from "@/components/title";
@@ -14,7 +14,7 @@ const DashboardPage = () => {
           <div className="md:hidden">
             <SidebarAnalyticHeader />
           </div>
-          <ContainerTransaction />
+          <ContainerHomeTransaction />
         </section>
         <section className="hidden rounded-xl p-4 md:grid">
           <SidebarAnalytic />

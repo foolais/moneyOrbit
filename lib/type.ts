@@ -1,6 +1,6 @@
 export type ITransaction = {
   type: "income" | "expense";
-  style: "travel" | "gaming";
+  style: IStyleTransaction;
   activity: string;
   amount: number;
   date: string;
@@ -10,3 +10,13 @@ export type ITransaction = {
 export type GroupedTransactions = Record<string, ITransaction[]>;
 
 export type IFilterAnalytic = "all" | "income" | "expense";
+
+export type IStyleTransaction =
+  | "travel"
+  | "gaming"
+  | "food & beverage"
+  | "coffee"
+  | "entertainment"
+  | "shopping"
+  | "salary"
+  | "other";

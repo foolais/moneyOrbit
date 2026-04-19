@@ -9,7 +9,7 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
-import StarrySky from "@/public/starry-sky.gif";
+import StarrySky from "@/public/sky.gif";
 
 const SidebarAnalyticHeader = () => {
   const [filter, setFilter] = useState<IFilterAnalytic>("all");
@@ -72,14 +72,14 @@ const SidebarAnalyticHeader = () => {
         </div>
       </section>
       <section>
-        <div className="border-secondary relative my-4 h-32 w-full rounded-xl border-2 lg:max-w-md">
+        <div className="border-secondary relative my-4 h-36 w-full rounded-xl border-2 lg:max-w-md">
           <Image
             src={StarrySky}
             alt="Starry sky"
             fill
             loading="eager"
             unoptimized
-            className="rounded-xl object-cover"
+            className="rounded-xl object-cover object-top"
           />
         </div>
       </section>

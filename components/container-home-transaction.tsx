@@ -1,129 +1,12 @@
 import { GroupedTransactions, ITransaction } from "@/lib/type";
-import CardTransaction from "./card-transaction";
 import { Button } from "./ui/button";
 import AstronoutStyle from "@/public/astronout-style.webp";
 import Image from "next/image";
 import { Plus } from "lucide-react";
+import CardHomeTransaction from "./card-home-transaction";
+import { dummyDataTransaction } from "@/lib/data";
 
-export const dummyData: ITransaction[] = [
-  // TODAY
-  {
-    type: "expense",
-    style: "travel",
-    activity: "Booking Hotel",
-    amount: 1200000,
-    date: "2026-04-18T10:30:00",
-    merchant: "Traveloka",
-  },
-  {
-    type: "income",
-    style: "gaming",
-    activity: "QRIS Payment",
-    amount: 75000,
-    date: "2026-04-18T14:10:00",
-    merchant: "Indomaret",
-  },
-  {
-    type: "expense",
-    style: "gaming",
-    activity: "Train Ticket",
-    amount: 350000,
-    date: "2026-04-18T18:45:00",
-    merchant: "KAI",
-  },
-  {
-    type: "expense",
-    style: "gaming",
-    activity: "Graduation",
-    amount: 1700000,
-    date: "2026-04-18T18:45:00",
-    merchant: "KAI",
-  },
-
-  // YESTERDAY
-  {
-    type: "expense",
-    style: "travel",
-    activity: "Train Ticket",
-    amount: 90000,
-    date: "2026-04-17T09:20:00",
-    merchant: "KAI",
-  },
-  {
-    type: "income",
-    style: "gaming",
-    activity: "QRIS Payment",
-    amount: 110000,
-    date: "2026-04-17T20:15:00",
-    merchant: "Alfamart",
-  },
-
-  // 2 DAYS AGO
-  {
-    type: "income",
-    style: "gaming",
-    activity: "Top Up Game",
-    amount: 150000,
-    date: "2026-04-16T13:00:00",
-    merchant: "Google Play",
-  },
-  {
-    type: "expense",
-    style: "travel",
-    activity: "Flight Ticket",
-    amount: 300000,
-    date: "2026-04-16T08:10:00",
-    merchant: "Garuda Indonesia",
-  },
-
-  // 3 DAYS AGO
-  {
-    type: "expense",
-    style: "travel",
-    activity: "Restaurant",
-    amount: 80000,
-    date: "2026-04-15T19:25:00",
-    merchant: "Pizza Hut",
-  },
-  {
-    type: "income",
-    style: "gaming",
-    activity: "QRIS Payment",
-    amount: 95000,
-    date: "2026-04-15T11:40:00",
-    merchant: "Alfamart",
-  },
-
-  // 4 DAYS AGO
-  {
-    type: "expense",
-    style: "gaming",
-    activity: "Top Up Game",
-    amount: 60000,
-    date: "2026-04-14T16:30:00",
-    merchant: "Google Play",
-  },
-  {
-    type: "expense",
-    style: "travel",
-    activity: "Coffee Shop",
-    amount: 30000,
-    date: "2026-04-14T09:50:00",
-    merchant: "Starbucks",
-  },
-
-  // 5 DAYS AGO
-  {
-    type: "income",
-    style: "gaming",
-    activity: "QRIS Payment",
-    amount: 200000,
-    date: "2026-04-13T21:10:00",
-    merchant: "Indomaret",
-  },
-];
-
-const ContainerTransaction = () => {
+const ContainerHomeTransaction = () => {
   const groupTransactions = (data: ITransaction[]): GroupedTransactions => {
     const groups: GroupedTransactions = {};
 
@@ -161,7 +44,7 @@ const ContainerTransaction = () => {
     return groups;
   };
 
-  const sortedData = [...dummyData].sort(
+  const sortedData = [...dummyDataTransaction].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
 
@@ -184,7 +67,10 @@ const ContainerTransaction = () => {
           />
         </div>
         <div className="flex justify-end">
-          <Button className="cursor-pointer rounded-xl" size="sm">
+          <Button
+            className="cursor-pointer rounded-xl transition-all duration-300 hover:scale-105"
+            size="sm"
+          >
             NEW <Plus className="size-5" />
           </Button>
         </div>
@@ -199,7 +85,7 @@ const ContainerTransaction = () => {
               {items.map((item, index) => (
                 <li key={index}>
                   <article>
-                    <CardTransaction
+                    <CardHomeTransaction
                       type={item.type}
                       style={item.style}
                       activity={item.activity}
@@ -217,4 +103,4 @@ const ContainerTransaction = () => {
   );
 };
 
-export default ContainerTransaction;
+export default ContainerHomeTransaction;

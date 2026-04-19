@@ -72,7 +72,7 @@ const SidebarAnalyticHeader = () => {
         </div>
       </section>
       <section>
-        <div className="border-secondary relative my-4 h-36 w-full rounded-xl border-2 lg:max-w-md">
+        <div className="border-secondary relative my-4 h-36 w-full rounded-xl border-2">
           <Image
             src={StarrySky}
             alt="Starry sky"

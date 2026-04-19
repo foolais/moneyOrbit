@@ -2,6 +2,8 @@ import { ChartNoAxesColumnIncreasing, Home, User } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import Title from "./title";
+import Image from "next/image";
+import AstronoutMoon from "@/public/astronout-moon.webp";
 
 const Header = () => {
   const headerItems = [
@@ -11,7 +13,7 @@ const Header = () => {
       icon: Home,
     },
     {
-      name: "Analysis",
+      name: "All Transactions",
       href: "/home",
       icon: ChartNoAxesColumnIncreasing,
     },
@@ -36,15 +38,25 @@ const Header = () => {
               <Button
                 variant="secondary"
                 size="icon"
-                className="group-hover:bg-secondary/70 cursor-pointer transition group-hover:scale-105"
+                className="group-hover:bg-secondary/70 cursor-pointer transition group-hover:scale-105 sm:hidden"
               >
                 <item.icon className="size-4" />
               </Button>
-              <p className="text-sm font-medium">{item.name}</p>
+              <p className="bg-secondary hidden rounded-full px-2 py-0.5 text-sm font-semibold transition-all group-hover:scale-105 sm:block">
+                {item.name}
+              </p>
             </Link>
           );
         })}
       </div>
+      <Image
+        src={AstronoutMoon}
+        alt="Astronout on the moon"
+        className="hidden sm:block"
+        width={70}
+        height={70}
+        loading="eager"
+      />
     </div>
   );
 };

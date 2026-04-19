@@ -1,16 +1,19 @@
+import { ITransaction } from "@/lib/type";
 import { Card, CardContent } from "./ui/card";
 import AstronoutGame from "@/public/astronout-game.webp";
 import AstronoutRocket from "@/public/astronout-rocket.webp";
 import Image from "next/image";
+import { formatPrice } from "@/lib/utils";
 
-type IProps = {
-  type: "expense" | "income";
-  style: "gaming" | "travel";
-  activity: string;
-  amount: number;
-};
+type IProps = Omit<ITransaction, "date">;
 
-const CardTransaction = ({ type, style, activity, amount }: IProps) => {
+const CardTransaction = ({
+  type,
+  style,
+  activity,
+  amount,
+  merchant,
+}: IProps) => {
   return (
     <Card className="cursor-pointer py-1 transition-all duration-300 hover:scale-105">
       <CardContent className="flex items-center justify-between">
@@ -23,18 +26,18 @@ const CardTransaction = ({ type, style, activity, amount }: IProps) => {
             className="object-cover"
             loading="eager"
           />
-          <h2 className="w-full text-sm font-semibold tracking-wider">
-            {activity}
-          </h2>
+          <div>
+            <h2 className="w-full font-semibold tracking-wider">{activity}</h2>
+            <span className="text-sm font-semibold text-slate-400">
+              {merchant}
+            </span>
+          </div>
         </div>
         <p
-          className={`text-${type === "expense" ? "destructive" : "accent"} w-max min-w-25 text-right font-bold`}
+          className={`text-${type === "expense" ? "destructive" : "black"} w-max min-w-25 text-right font-bold`}
         >
           {type === "expense" ? "-" : "+"}
-          {amount.toLocaleString("id-ID", {
-            style: "currency",
-            currency: "IDR",
-          })}
+          {formatPrice(amount)}
         </p>
       </CardContent>
     </Card>

@@ -31,16 +31,16 @@ const Header = () => {
             <Link
               href={item.href}
               key={item.name}
-              className="group hover:bg-muted flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all"
+              className="group hover:bg-muted flex items-center gap-1 rounded-xl px-2 py-1.5 transition-all"
             >
               <Button
                 variant="secondary"
                 size="icon"
-                className="group-hover:bg-secondary/70 transition group-hover:scale-105"
+                className="group-hover:bg-secondary/70 cursor-pointer transition group-hover:scale-105"
               >
                 <item.icon className="size-4" />
               </Button>
-              <p className="hidden text-sm font-medium sm:block">{item.name}</p>
+              <p className="text-sm font-medium">{item.name}</p>
             </Link>
           );
         })}

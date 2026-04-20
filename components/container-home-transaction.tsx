@@ -2,9 +2,9 @@ import { GroupedTransactions, ITransaction } from "@/lib/type";
 import { Button } from "./ui/button";
 import AstronoutStyle from "@/public/astronout-style.webp";
 import Image from "next/image";
-import { Plus } from "lucide-react";
 import CardHomeTransaction from "./card-home-transaction";
 import { dummyDataTransaction } from "@/lib/data";
+import DialogFormTransaction from "./dialog-form-transaction";
 
 const ContainerHomeTransaction = () => {
   const groupTransactions = (data: ITransaction[]): GroupedTransactions => {
@@ -67,12 +67,7 @@ const ContainerHomeTransaction = () => {
           />
         </div>
         <div className="flex justify-end">
-          <Button
-            className="cursor-pointer rounded-xl transition-all duration-300 hover:scale-105"
-            size="sm"
-          >
-            NEW <Plus className="size-5" />
-          </Button>
+          <DialogFormTransaction />
         </div>
       </header>
       <ul className="mx-auto mb-8 w-11/12 space-y-4">

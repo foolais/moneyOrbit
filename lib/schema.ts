@@ -21,3 +21,37 @@ export const RegisterSchema = z
   });
 
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
+
+export const TransactionSchema = z.object({
+  type: z.enum(["income", "expense"], {
+    errorMap: () => ({ message: "must be either 'income' or 'expense'" }),
+  }),
+  activity: z.string().min(3, "must be at least 3 characters long"),
+  amount: z
+    .number()
+    .min(100, "must be at least 100")
+    .positive("must be a positive number"),
+  style: z.enum([
+    "travel",
+    "gaming",
+    "food & beverage",
+    "coffee",
+    "entertainment",
+    "shopping",
+    "salary",
+    "other",
+  ]),
+  date: z.string().refine((date) => !isNaN(Date.parse(date)), {
+    message: "Invalid date format",
+  }),
+  merchant: z.string().min(2, "must be at least 2 characters long"),
+  description: z
+    .string()
+    .min(5, "must be at least 5 characters")
+    .max(150, "must be at most 150 characters")
+    .optional()
+    .or(z.literal("")),
+  image: z.any().optional(),
+});
+
+export type TransactionSchemaType = z.infer<typeof TransactionSchema>;

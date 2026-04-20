@@ -197,3 +197,42 @@ export const dummyDataTransaction: ITransaction[] = [
 export const dataStyleTransaction = Object.keys(
   styleTransactionConfig,
 ) as IStyleTransaction[];
+
+export const amountButton = [
+  {
+    value: 1000,
+    label: "+1k",
+  },
+  {
+    value: 5000,
+    label: "+5k",
+  },
+  {
+    value: 10000,
+    label: "+10k",
+  },
+  {
+    value: 50000,
+    label: "+50k",
+  },
+  {
+    value: 1000,
+    label: "-1k",
+  },
+  {
+    value: 5000,
+    label: "-5k",
+  },
+  {
+    value: 10000,
+    label: "-10k",
+  },
+  {
+    value: 50000,
+    label: "-50k",
+  },
+  {
+    value: 0,
+    label: "reset",
+  },
+];

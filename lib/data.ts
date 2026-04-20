@@ -64,11 +64,11 @@ export const dummyDataTransaction: ITransaction[] = [
   // TODAY
   {
     type: "expense",
-    style: "travel",
     activity: "Booking Hotel",
     amount: 1200000,
     date: "2026-04-18T10:30:00",
     merchant: "Traveloka",
+    style: "travel",
   },
   {
     type: "income",

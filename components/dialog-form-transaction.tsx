@@ -217,7 +217,7 @@ const DialogFormTransaction = ({
                           type="button"
                           disabled={isDisabled}
                           onClick={() => field.onChange(option)}
-                          className={`flex-1 cursor-pointer rounded-md px-3 py-1 text-sm transition-all duration-300 ease-in-out ${
+                          className={`flex-1 cursor-pointer rounded-md px-3 py-1 text-sm transition-all duration-300 ease-in-out disabled:cursor-not-allowed ${
                             isActive
                               ? option === "income"
                                 ? "bg-green-500 text-white"
@@ -310,7 +310,7 @@ const DialogFormTransaction = ({
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
-                          className="w-full justify-between"
+                          className="w-full justify-between disabled:opacity-100"
                           disabled={isDisabled}
                         >
                           {date ? format(date, "PPP") : "Pick a date"}
@@ -320,6 +320,7 @@ const DialogFormTransaction = ({
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
+                          className="disabled:opacity-100"
                           selected={date}
                           onSelect={(selectedDate) => {
                             if (selectedDate) {
@@ -413,12 +414,21 @@ const DialogFormTransaction = ({
                       className="resize-none"
                       aria-invalid={fieldState.invalid}
                       disabled={isDisabled}
+                      value={
+                        isDetail && !field.value
+                          ? "no description"
+                          : field.value
+                            ? field.value
+                            : ""
+                      }
                     />
-                    <InputGroupAddon align="block-end">
-                      <InputGroupText className="tabular-nums">
-                        {field.value?.length || 0}/150 characters
-                      </InputGroupText>
-                    </InputGroupAddon>
+                    {!isDetail && (
+                      <InputGroupAddon align="block-end">
+                        <InputGroupText className="tabular-nums">
+                          {field.value?.length || 0}/150 characters
+                        </InputGroupText>
+                      </InputGroupAddon>
+                    )}
                   </InputGroup>
                   {fieldState.error && (
                     <FieldError errors={[fieldState.error]} />
@@ -431,7 +441,7 @@ const DialogFormTransaction = ({
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Image</FieldLabel>
+                  <FieldLabel htmlFor={field.name}>image</FieldLabel>
                   {!isDetail && (
                     <InputGroup className="cursor-pointer bg-white">
                       <InputGroupInput
@@ -473,6 +483,11 @@ const DialogFormTransaction = ({
                 >
                   <XIcon />
                 </Button>
+              </div>
+            )}
+            {isDetail && !previewImage && (
+              <div className="w-full">
+                <Input disabled value={"no image"} />
               </div>
             )}
           </FieldGroup>

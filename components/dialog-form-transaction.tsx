@@ -30,6 +30,7 @@ import { Input } from "./ui/input";
 import Image from "next/image";
 import AstronoutLaptop from "@/public/working-laptop.webp";
 import AstronoutRocket from "@/public/astronout-rocket.webp";
+import AstronoutRunMoney from "@/public/astronout-run-money.webp";
 import { formatRupiahOnInput, uploadToCloudinary } from "@/lib/utils";
 import {
   amountButton,
@@ -38,7 +39,7 @@ import {
 } from "@/lib/data";
 import { TransactionSchema, TransactionSchemaType } from "@/lib/schema";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import { Calendar } from "./ui/calendar";
 import {
   Select,
@@ -57,7 +58,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 
 type IDialogFormTransaction = {
-  mode?: "create" | "edit" | "detail";
+  mode?: "create" | "edit";
   initialData?: Partial<TransactionSchemaType>;
   trigger?: React.ReactNode;
 };
@@ -67,7 +68,6 @@ const DialogFormTransaction = ({
   initialData,
   trigger,
 }: IDialogFormTransaction) => {
-  const isDetail = mode === "detail";
   const isEdit = mode === "edit";
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -98,6 +98,16 @@ const DialogFormTransaction = ({
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
+    if (initialData && openDialog) {
+      form.reset({
+        ...form.getValues(),
+        ...initialData,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialData, openDialog]);
+
+  useEffect(() => {
     return () => {
       if (imageData instanceof File) {
         URL.revokeObjectURL(previewImage!);
@@ -117,14 +127,18 @@ const DialogFormTransaction = ({
     const current = form.getValues("amount") || 0;
 
     if (item.label === "reset") {
-      form.setValue("amount", 0);
+      form.setValue("amount", isEdit ? initialData?.amount || 0 : 0, {
+        shouldDirty: true,
+      });
       return;
     }
 
     if (item.label.includes("+")) {
-      form.setValue("amount", current + item.value);
+      form.setValue("amount", current + item.value, { shouldDirty: true });
     } else if (item.label.includes("-")) {
-      form.setValue("amount", Math.max(0, current - item.value));
+      form.setValue("amount", Math.max(0, current - item.value), {
+        shouldDirty: true,
+      });
     }
   };
 
@@ -187,6 +201,11 @@ const DialogFormTransaction = ({
       //   imageUrl = await uploadToCloudinary(data.image);
       // }
 
+      // const payload = {
+      //   ...data,
+      //   image: imageUrl
+      // }
+
       // console.log({ imageUrl });
 
       if (isEdit) {
@@ -206,13 +225,16 @@ const DialogFormTransaction = ({
     await form.handleSubmit(onSubmit)(e);
   };
 
-  const isDisabled = form.formState.isSubmitting || isDetail;
+  const isSubmitting = form.formState.isSubmitting;
+  const isDirty = isEdit && !form.formState.isDirty;
+
+  const isDisabled = isSubmitting;
 
   return (
     <Dialog
       open={openDialog}
       onOpenChange={(val) => {
-        if (!form.formState.isSubmitting) {
+        if (!isSubmitting) {
           setOpenDialog(val);
 
           if (!val) resetForm();
@@ -247,257 +269,267 @@ const DialogFormTransaction = ({
               <span>
                 {mode === "create" && "Add new transaction"}
                 {mode === "edit" && "Edit transaction"}
-                {mode === "detail" && "Transaction detail"}
               </span>{" "}
               <Sparkles className="size-5" />
             </DialogTitle>
             <DialogDescription>
               {mode === "create" && "fill the form to add new transaction"}
               {mode === "edit" && "fill the form to change your transaction"}
-              {mode === "detail" && "detail about your transaction"}
             </DialogDescription>
           </DialogHeader>
-          <FieldGroup className="max-h-[50vh] gap-2 overflow-y-scroll">
-            <Controller
-              name="type"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid} className="w-full">
-                  <div className="flex w-full rounded-l-sm border bg-white">
-                    {["income", "expense"].map((option) => {
-                      const isActive = field.value === option;
-
-                      return (
-                        <button
-                          key={option}
-                          type="button"
-                          disabled={isDisabled}
-                          onClick={() => field.onChange(option)}
-                          className={`flex-1 cursor-pointer rounded-md px-3 py-1 text-sm transition-all duration-300 ease-in-out disabled:cursor-not-allowed ${
-                            isActive
-                              ? option === "income"
-                                ? "bg-green-500 text-white"
-                                : "bg-red-500 text-white"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          {option}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {fieldState.error && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="activity"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid} className="w-full">
-                  <FieldLabel htmlFor={field.name}>activity</FieldLabel>
-                  <Input
-                    {...field}
-                    placeholder="activity name"
-                    aria-invalid={fieldState.invalid}
-                    autoComplete="off"
-                    disabled={isDisabled}
-                  />
-                  {fieldState.error && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="amount"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid} className="w-full">
-                  <FieldLabel htmlFor={field.name}>amount</FieldLabel>
-                  <div className="flex flex-wrap items-center justify-center gap-1">
-                    {amountButton.map((amount, index) => {
-                      return (
-                        <Button
-                          type="button"
-                          key={index}
-                          size="xs"
-                          className={`cursor-pointer transition-all duration-300 hover:scale-105 ${setColor(amount.label)} ${isDetail ? "pointer-events-none hidden" : "block"}`}
-                          onClick={() => onClickAmount(amount)}
-                          disabled={isDisabled}
-                        >
-                          {amount.label}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                  <Input
-                    {...field}
-                    placeholder="amount spent"
-                    aria-invalid={fieldState.invalid}
-                    onChange={(e) => {
-                      const raw = e.target.value.replace(/[^\d]/g, "");
-                      field.onChange(+raw);
-                    }}
-                    value={formatRupiahOnInput(String(field.value || 0))}
-                    autoComplete="off"
-                    disabled={isDisabled}
-                  />
-                  {fieldState.error && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="date"
-              control={form.control}
-              render={({ field, fieldState }) => {
-                const date = field.value ? new Date(field.value) : undefined;
-
-                return (
+          {isSubmitting ? (
+            <div className="flex min-h-[52vh] flex-col items-center justify-center">
+              <Image
+                src={AstronoutRunMoney}
+                alt="Astronout on the moon"
+                height={400}
+                width={400}
+                loading="eager"
+                className="animate-bounce object-cover"
+              />
+              <span className="stroke-text text-accent animate-pulse text-xl font-semibold tracking-widest">
+                {mode === "create"
+                  ? "creating transaction..."
+                  : "updating transaction..."}
+              </span>
+            </div>
+          ) : (
+            <FieldGroup className="max-h-[50vh] gap-2 overflow-y-scroll">
+              <Controller
+                name="type"
+                control={form.control}
+                render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid} className="w-full">
-                    <FieldLabel>date</FieldLabel>
+                    <div className="flex w-full rounded-l-sm border bg-white">
+                      {["income", "expense"].map((option) => {
+                        const isActive = field.value === option;
 
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full justify-between disabled:opacity-100"
-                          disabled={isDisabled}
-                        >
-                          {date ? format(date, "PPP") : "Pick a date"}
-                          <CalendarIcon className="ml-2 size-4" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          className="disabled:opacity-100"
-                          selected={date}
-                          onSelect={(selectedDate) => {
-                            if (selectedDate) {
-                              field.onChange(selectedDate.toISOString());
-                            }
-                          }}
-                        />
-                      </PopoverContent>
-                    </Popover>
+                        return (
+                          <button
+                            key={option}
+                            type="button"
+                            disabled={isDisabled}
+                            onClick={() => field.onChange(option)}
+                            className={`flex-1 cursor-pointer rounded-md px-3 py-1 text-sm transition-all duration-300 ease-in-out disabled:cursor-not-allowed ${
+                              isActive
+                                ? option === "income"
+                                  ? "bg-green-500 text-white"
+                                  : "bg-red-500 text-white"
+                                : "text-muted-foreground"
+                            }`}
+                          >
+                            {option}
+                          </button>
+                        );
+                      })}
+                    </div>
                     {fieldState.error && (
                       <FieldError errors={[fieldState.error]} />
                     )}
                   </Field>
-                );
-              }}
-            />
-            <Controller
-              name="style"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid} className="w-full">
-                  <FieldLabel>style</FieldLabel>
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={isDisabled}
-                  >
-                    <SelectTrigger className="w-full bg-white">
-                      <SelectValue placeholder="Pick a style" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {dataStyleTransaction.map((style) => (
-                        <SelectItem
-                          key={style}
-                          value={style}
-                          className="flex items-center gap-2"
-                        >
-                          <Image
-                            src={styleTransactionConfig[style].image}
-                            alt={style}
-                            width={30}
-                            height={30}
-                            className="object-cover"
-                          />
-                          <span
-                            className={`${styleTransactionConfig[style].textColor} ${styleTransactionConfig[style].bgColor} justify-self-end rounded-full px-2 py-0.5 text-sm font-semibold`}
-                          >
-                            {style}
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {fieldState.error && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="merchant"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid} className="w-full">
-                  <FieldLabel htmlFor={field.name}>merchant</FieldLabel>
-                  <Input
-                    {...field}
-                    placeholder="merchant name"
-                    aria-invalid={fieldState.invalid}
-                    autoComplete="off"
-                    disabled={isDisabled}
-                  />
-                  {fieldState.error && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="description"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>description</FieldLabel>
-                  <InputGroup className="bg-white">
-                    <InputGroupTextarea
+                )}
+              />
+              <Controller
+                name="activity"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} className="w-full">
+                    <FieldLabel htmlFor={field.name}>activity</FieldLabel>
+                    <Input
                       {...field}
-                      id={field.name}
-                      placeholder="description (optional)"
-                      autoComplete="off"
-                      className="resize-none"
+                      placeholder="activity name"
                       aria-invalid={fieldState.invalid}
+                      autoComplete="off"
                       disabled={isDisabled}
-                      value={
-                        isDetail && !field.value
-                          ? "no description"
-                          : field.value
-                            ? field.value
-                            : ""
-                      }
                     />
-                    {!isDetail && (
+                    {fieldState.error && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="amount"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} className="w-full">
+                    <FieldLabel htmlFor={field.name}>amount</FieldLabel>
+                    <div className="flex flex-wrap items-center justify-center gap-1">
+                      {amountButton.map((amount, index) => {
+                        return (
+                          <Button
+                            type="button"
+                            key={index}
+                            size="xs"
+                            className={`cursor-pointer transition-all duration-300 hover:scale-105 ${setColor(amount.label)}`}
+                            onClick={() => onClickAmount(amount)}
+                            disabled={isDisabled}
+                          >
+                            {amount.label}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    <Input
+                      {...field}
+                      placeholder="amount spent"
+                      aria-invalid={fieldState.invalid}
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/[^\d]/g, "");
+                        field.onChange(+raw);
+                      }}
+                      value={formatRupiahOnInput(String(field.value || 0))}
+                      autoComplete="off"
+                      disabled={isDisabled}
+                    />
+                    {fieldState.error && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="date"
+                control={form.control}
+                render={({ field, fieldState }) => {
+                  const date = field.value ? new Date(field.value) : undefined;
+
+                  return (
+                    <Field data-invalid={fieldState.invalid} className="w-full">
+                      <FieldLabel>date</FieldLabel>
+
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="w-full justify-between disabled:opacity-100"
+                            disabled={isDisabled}
+                          >
+                            {date ? format(date, "PPP") : "Pick a date"}
+                            <CalendarIcon className="ml-2 size-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            className="disabled:opacity-100"
+                            selected={date}
+                            onSelect={(selectedDate) => {
+                              if (selectedDate) {
+                                field.onChange(selectedDate.toISOString());
+                              }
+                            }}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      {fieldState.error && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  );
+                }}
+              />
+              <Controller
+                name="style"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} className="w-full">
+                    <FieldLabel>style</FieldLabel>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={isDisabled}
+                    >
+                      <SelectTrigger className="w-full bg-white">
+                        <SelectValue placeholder="Pick a style" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {dataStyleTransaction.map((style) => (
+                          <SelectItem
+                            key={style}
+                            value={style}
+                            className="flex items-center gap-2"
+                          >
+                            <Image
+                              src={styleTransactionConfig[style].image}
+                              alt={style}
+                              width={30}
+                              height={30}
+                              className="object-cover"
+                            />
+                            <span
+                              className={`${styleTransactionConfig[style].textColor} ${styleTransactionConfig[style].bgColor} justify-self-end rounded-full px-2 py-0.5 text-sm font-semibold`}
+                            >
+                              {style}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.error && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="merchant"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid} className="w-full">
+                    <FieldLabel htmlFor={field.name}>merchant</FieldLabel>
+                    <Input
+                      {...field}
+                      placeholder="merchant name"
+                      aria-invalid={fieldState.invalid}
+                      autoComplete="off"
+                      disabled={isDisabled}
+                    />
+                    {fieldState.error && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="description"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>description</FieldLabel>
+                    <InputGroup className="bg-white">
+                      <InputGroupTextarea
+                        {...field}
+                        id={field.name}
+                        placeholder="description (optional)"
+                        autoComplete="off"
+                        className="resize-none"
+                        aria-invalid={fieldState.invalid}
+                        disabled={isDisabled}
+                        value={field.value || ""}
+                      />
                       <InputGroupAddon align="block-end">
                         <InputGroupText className="tabular-nums">
                           {field.value?.length || 0}/150 characters
                         </InputGroupText>
                       </InputGroupAddon>
+                    </InputGroup>
+                    {fieldState.error && (
+                      <FieldError errors={[fieldState.error]} />
                     )}
-                  </InputGroup>
-                  {fieldState.error && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              name="image"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>image</FieldLabel>
-                  {!isDetail && (
+                  </Field>
+                )}
+              />
+              <Controller
+                name="image"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>
+                      {isEdit && imageData
+                        ? "image (click to change image)"
+                        : "image"}
+                    </FieldLabel>
                     <InputGroup className="cursor-pointer bg-white">
                       <InputGroupInput
                         ref={fileRef}
@@ -510,70 +542,61 @@ const DialogFormTransaction = ({
                         <Upload />
                       </InputGroupAddon>
                     </InputGroup>
-                  )}
-                </Field>
-              )}
-            />
-            {isUploadingImage && (
-              <div className="relative my-4 w-fit">
-                <Image
-                  src={AstronoutRocket}
-                  alt="uploading image"
-                  width={100}
-                  height={100}
-                  className="animate-bounce object-cover"
-                />
-                <p className="text-muted-foreground animate-pulse text-xs">
-                  Uploading image...
-                </p>
-              </div>
-            )}
-            {previewImage && (
-              <div className="relative w-fit">
-                <Image
-                  src={previewImage}
-                  alt="preview"
-                  width={200}
-                  height={200}
-                  className="rounded-xl border-2 object-cover"
-                />
-                <Button
-                  variant="destructive"
-                  type="button"
-                  size="xs"
-                  onClick={() => {
-                    form.setValue("image", undefined);
-                    if (fileRef.current) fileRef.current.value = "";
-                  }}
-                  className="absolute top-1 right-1 cursor-pointer rounded-xl"
-                >
-                  <XIcon />
-                </Button>
-              </div>
-            )}
-            {isDetail && !previewImage && (
-              <div className="w-full">
-                <Input disabled value={"no image"} />
-              </div>
-            )}
-          </FieldGroup>
-          {!isDetail && (
-            <div className="flex items-center justify-end">
-              <Button
-                type="submit"
-                variant="secondary"
-                className="mt-4 flex cursor-pointer items-center justify-center"
-                disabled={isDisabled}
-              >
-                {isEdit ? "update transaction" : "create transaction"}
-                {form.formState.isSubmitting ? (
-                  <Loader className="animate-spin" />
-                ) : (
-                  <Send />
+                  </Field>
                 )}
-              </Button>
-            </div>
+              />
+              {isUploadingImage && (
+                <div className="relative my-4 w-fit">
+                  <Image
+                    src={AstronoutRocket}
+                    alt="uploading image"
+                    width={100}
+                    height={100}
+                    className="animate-bounce object-cover"
+                  />
+                  <p className="text-muted-foreground animate-pulse text-xs">
+                    Uploading image...
+                  </p>
+                </div>
+              )}
+              {previewImage && (
+                <div className="relative w-fit">
+                  <Image
+                    src={previewImage}
+                    alt="preview"
+                    width={200}
+                    height={200}
+                    className="rounded-xl border-2 object-cover"
+                  />
+                  <Button
+                    variant="destructive"
+                    type="button"
+                    size="xs"
+                    onClick={() => {
+                      form.setValue("image", undefined);
+                      if (fileRef.current) fileRef.current.value = "";
+                    }}
+                    className="absolute top-1 right-1 cursor-pointer rounded-xl"
+                  >
+                    <XIcon />
+                  </Button>
+                </div>
+              )}
+            </FieldGroup>
           )}
+          <div
+            className={`flex items-center justify-end ${isSubmitting && "hidden"}`}
+          >
+            <Button
+              type="submit"
+              variant="secondary"
+              className="mt-4 flex cursor-pointer items-center justify-center"
+              disabled={isDisabled || isDirty}
+            >
+              {isEdit ? "update transaction" : "create transaction"}
+              {isSubmitting ? <Loader className="animate-spin" /> : <Send />}
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

@@ -23,7 +23,7 @@ const CardHomeTransaction = ({
   };
   return (
     <DialogFormTransaction
-      mode="detail"
+      mode="edit"
       initialData={initialData}
       trigger={
         <Card className="cursor-pointer py-1 transition-all duration-300 hover:scale-105">

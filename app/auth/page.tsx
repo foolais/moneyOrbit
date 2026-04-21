@@ -16,7 +16,7 @@ const AuthPage = () => {
   const [isLoginForm, setIsLoginForm] = useState(true);
 
   return (
-    <div className="relative flex h-screen w-screen flex-col items-center justify-center">
+    <div className="relative flex h-dvh w-screen flex-col items-center justify-center overflow-hidden">
       <div className="relative flex w-xs flex-col gap-2">
         <Title className="ml-4" />
         <Card>
@@ -53,7 +53,7 @@ const AuthPage = () => {
           alt="Working Laptop"
           width={150}
           height={150}
-          className="absolute -top-24 -right-12 object-cover"
+          className="absolute -top-24 -right-8 object-cover"
           loading="eager"
         />
       </div>

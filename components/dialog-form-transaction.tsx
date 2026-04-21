@@ -19,11 +19,17 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import {
+  Controller,
+  ControllerRenderProps,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import Image from "next/image";
 import AstronoutLaptop from "@/public/working-laptop.webp";
+import AstronoutRocket from "@/public/astronout-rocket.webp";
 import { formatRupiahOnInput, uploadToCloudinary } from "@/lib/utils";
 import {
   amountButton,
@@ -32,7 +38,7 @@ import {
 } from "@/lib/data";
 import { TransactionSchema, TransactionSchemaType } from "@/lib/schema";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { Calendar } from "./ui/calendar";
 import {
   Select,
@@ -65,6 +71,7 @@ const DialogFormTransaction = ({
   const isEdit = mode === "edit";
 
   const [openDialog, setOpenDialog] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const form = useForm<TransactionSchemaType>({
     resolver: zodResolver(TransactionSchema),
@@ -126,6 +133,51 @@ const DialogFormTransaction = ({
     if (fileRef.current) fileRef.current.value = "";
   };
 
+  const onChangeImage = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: ControllerRenderProps<TransactionSchemaType, "image">,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage(true);
+
+    try {
+      if (file.type === "image/heic" || file.name.endsWith(".heic")) {
+        try {
+          const heic2any = (await import("heic2any")).default;
+
+          const convertedBlob = await heic2any({
+            blob: file,
+            toType: "image/jpeg",
+          });
+
+          const blob = Array.isArray(convertedBlob)
+            ? convertedBlob[0]
+            : convertedBlob;
+
+          const convertedFile = new File(
+            [blob as Blob],
+            file.name.replace(".heic", ".jpg"),
+            {
+              type: "image/jpeg",
+            },
+          );
+
+          field.onChange(convertedFile);
+        } catch (error) {
+          console.log("HEIC conversion failed", error);
+        }
+      } else {
+        field.onChange(file);
+      }
+    } catch (error) {
+      console.log({ error });
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
   const onSubmit = async (data: TransactionSchemaType) => {
     try {
       // let imageUrl = "";
@@ -160,7 +212,11 @@ const DialogFormTransaction = ({
     <Dialog
       open={openDialog}
       onOpenChange={(val) => {
-        if (!form.formState.isSubmitting) setOpenDialog(val);
+        if (!form.formState.isSubmitting) {
+          setOpenDialog(val);
+
+          if (!val) resetForm();
+        }
       }}
     >
       <DialogTrigger asChild>
@@ -247,7 +303,6 @@ const DialogFormTransaction = ({
                     placeholder="activity name"
                     aria-invalid={fieldState.invalid}
                     autoComplete="off"
-                    autoFocus
                     disabled={isDisabled}
                   />
                   {fieldState.error && (
@@ -448,10 +503,7 @@ const DialogFormTransaction = ({
                         ref={fileRef}
                         type="file"
                         accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) field.onChange(file);
-                        }}
+                        onChange={(e) => onChangeImage(e, field)}
                         disabled={isDisabled}
                       />
                       <InputGroupAddon align="inline-end">
@@ -462,6 +514,20 @@ const DialogFormTransaction = ({
                 </Field>
               )}
             />
+            {isUploadingImage && (
+              <div className="relative my-4 w-fit">
+                <Image
+                  src={AstronoutRocket}
+                  alt="uploading image"
+                  width={100}
+                  height={100}
+                  className="animate-bounce object-cover"
+                />
+                <p className="text-muted-foreground animate-pulse text-xs">
+                  Uploading image...
+                </p>
+              </div>
+            )}
             {previewImage && (
               <div className="relative w-fit">
                 <Image

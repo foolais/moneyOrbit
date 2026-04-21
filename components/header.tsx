@@ -14,7 +14,7 @@ const Header = () => {
     },
     {
       name: "All Transactions",
-      href: "/home",
+      href: "/all-transactions",
       icon: ChartNoAxesColumnIncreasing,
     },
     {

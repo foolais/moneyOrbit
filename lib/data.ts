@@ -9,6 +9,7 @@ import AstronoutEntertainment from "@/public/astronout-entertainment.webp";
 import AstronoutShopping from "@/public/astronout-shooping.webp";
 import AstronoutSalary from "@/public/astronout-bag-money.webp";
 import AstronoutOther from "@/public/astronout-style.webp";
+import AstronoutMoon from "@/public/astronout-moon.webp";
 
 type StyleConfig = {
   image: StaticImageData;
@@ -59,6 +60,22 @@ export const styleTransactionConfig: Record<IStyleTransaction, StyleConfig> = {
     textColor: "text-gray-700",
   },
 };
+
+export const allStyleTransactionConfig: Record<
+  IStyleTransaction | "all",
+  StyleConfig
+> = {
+  all: {
+    image: AstronoutMoon,
+    bgColor: "bg-lime-100",
+    textColor: "text-lime-700",
+  },
+  ...styleTransactionConfig,
+};
+
+export const dataAllStyleTransaction = Object.keys(
+  allStyleTransactionConfig,
+) as (IStyleTransaction | "all")[];
 
 export const dummyDataTransaction: ITransaction[] = [
   // TODAY

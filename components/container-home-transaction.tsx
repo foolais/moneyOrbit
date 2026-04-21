@@ -55,7 +55,7 @@ const ContainerHomeTransaction = () => {
       <header className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Button variant="secondary" className="rounded-xl" size="sm">
-            Recent Transactions
+            recent transactions
           </Button>
           <Image
             src={AstronoutStyle}

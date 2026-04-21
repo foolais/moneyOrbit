@@ -405,7 +405,7 @@ const DialogFormTransaction = ({
                             className="w-full justify-between disabled:opacity-100"
                             disabled={isDisabled}
                           >
-                            {date ? format(date, "PPP") : "Pick a date"}
+                            {date ? format(date, "PP") : "Pick a date"}
                             <CalendarIcon className="ml-2 size-4" />
                           </Button>
                         </PopoverTrigger>
@@ -441,7 +441,7 @@ const DialogFormTransaction = ({
                       disabled={isDisabled}
                     >
                       <SelectTrigger className="w-full bg-white">
-                        <SelectValue placeholder="Pick a style" />
+                        <SelectValue placeholder="pick a style" />
                       </SelectTrigger>
                       <SelectContent>
                         {dataStyleTransaction.map((style) => (

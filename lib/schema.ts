@@ -55,3 +55,35 @@ export const TransactionSchema = z.object({
 });
 
 export type TransactionSchemaType = z.infer<typeof TransactionSchema>;
+
+export const FilterTransactionSchema = z.object({
+  search: z.string().optional(),
+  type: z
+    .enum(["income", "expense"], {
+      errorMap: () => ({ message: "must be either 'income' or 'expense'" }),
+    })
+    .optional(),
+  style: z
+    .enum([
+      "all",
+      "travel",
+      "gaming",
+      "food & beverage",
+      "coffee",
+      "entertainment",
+      "shopping",
+      "salary",
+      "other",
+    ])
+    .optional(),
+  rangeDate: z
+    .object({
+      from: z.date().optional(),
+      to: z.date().optional(),
+    })
+    .optional(),
+});
+
+export type FilterTransactionSchemaType = z.infer<
+  typeof FilterTransactionSchema
+>;

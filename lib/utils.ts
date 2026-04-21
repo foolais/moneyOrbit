@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import { format, isSameDay } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -37,4 +38,14 @@ export const uploadToCloudinary = async (file: File) => {
 
   const data = await res.json();
   return data.secure_url as string;
+};
+
+export const formatRangeDate = (range?: { from?: Date; to?: Date }) => {
+  if (!range?.from) return "Pick a date";
+
+  if (!range.to) return format(range.from, "PP");
+
+  if (isSameDay(range.from, range.to)) return format(range.from, "PP");
+
+  return `${format(range.from, "PP")} - ${format(range.to, "PP")}`;
 };

@@ -36,7 +36,7 @@ const SidebarAnalyticHeader = () => {
       <section className="grid items-center gap-2">
         <div className="mb-2 flex items-center gap-2">
           <Button variant="secondary" className="rounded-xl" size="sm">
-            Wealth Analysis
+            wealth analysis
           </Button>
           <div className="flex items-center rounded-full bg-white px-2 py-1">
             {["all", "income", "expense"].map((value: string) => {

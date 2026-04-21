@@ -8,17 +8,17 @@ import AstronoutMoon from "@/public/astronout-moon.webp";
 const Header = () => {
   const headerItems = [
     {
-      name: "Home",
+      name: "home",
       href: "/home",
       icon: Home,
     },
     {
-      name: "All Transactions",
+      name: "all transactions",
       href: "/all-transactions",
       icon: ChartNoAxesColumnIncreasing,
     },
     {
-      name: "Profile",
+      name: "profile",
       href: "/home",
       icon: User,
     },

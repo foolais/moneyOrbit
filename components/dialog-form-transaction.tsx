@@ -79,7 +79,7 @@ const DialogFormTransaction = ({
       type: "income",
       activity: "",
       amount: 0,
-      date: new Date().toISOString(),
+      date: initialData?.date ?? new Date().toISOString(),
       style: "other",
       merchant: "",
       description: "",
@@ -230,6 +230,8 @@ const DialogFormTransaction = ({
   const isDirty = isEdit && !form.formState.isDirty;
 
   const isDisabled = isSubmitting;
+
+  console.log({ initialData });
 
   return (
     <Dialog

@@ -79,15 +79,14 @@ const ContainerHomeTransaction = () => {
             <ul className="space-y-2">
               {items.map((item, index) => (
                 <li key={index}>
-                  <article>
-                    <CardHomeTransaction
-                      type={item.type}
-                      style={item.style}
-                      activity={item.activity}
-                      amount={item.amount}
-                      merchant={item.merchant}
-                    />
-                  </article>
+                  <CardHomeTransaction
+                    type={item.type}
+                    style={item.style}
+                    activity={item.activity}
+                    amount={item.amount}
+                    merchant={item.merchant}
+                    date={item.date}
+                  />
                 </li>
               ))}
             </ul>

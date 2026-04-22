@@ -43,11 +43,13 @@ export const uploadToCloudinary = async (file: File) => {
 export const formatRangeDate = (range?: { from?: Date; to?: Date }) => {
   if (!range?.from) return "Pick a date";
 
-  if (!range.to) return format(range.from, "PP");
+  if (!range.to) return format(range.from, "dd MMM yyyy");
 
-  if (isSameDay(range.from, range.to)) return format(range.from, "PP");
+  if (isSameDay(range.from, range.to)) {
+    return format(range.from, "dd MMM yyyy");
+  }
 
-  return `${format(range.from, "PP")} - ${format(range.to, "PP")}`;
+  return `${format(range.from, "dd MMM yyyy")} - ${format(range.to, "dd MMM yyyy")}`;
 };
 
 export const getPagination = (current: number, total: number) => {

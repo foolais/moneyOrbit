@@ -59,8 +59,10 @@ export type TransactionSchemaType = z.infer<typeof TransactionSchema>;
 export const FilterTransactionSchema = z.object({
   search: z.string().optional(),
   type: z
-    .enum(["income", "expense"], {
-      errorMap: () => ({ message: "must be either 'income' or 'expense'" }),
+    .enum(["all", "income", "expense"], {
+      errorMap: () => ({
+        message: "must be either 'all', 'income' or 'expense'",
+      }),
     })
     .optional(),
   style: z

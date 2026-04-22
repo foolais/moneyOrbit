@@ -404,7 +404,7 @@ const DialogFormTransaction = ({
                             className="w-full justify-between disabled:opacity-100"
                             disabled={isDisabled}
                           >
-                            {date ? format(date, "PP") : "Pick a date"}
+                            {date ? format(date, "dd MMM yyyy") : "Pick a date"}
                             <CalendarIcon className="ml-2 size-4" />
                           </Button>
                         </PopoverTrigger>

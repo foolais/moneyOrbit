@@ -27,31 +27,100 @@ import { useState } from "react";
 import { allStyleTransactionConfig, dataAllStyleTransaction } from "@/lib/data";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
-import { CalendarIcon, Search } from "lucide-react";
+import { CalendarIcon, SearchIcon, TimerResetIcon } from "lucide-react";
 import { Calendar } from "./ui/calendar";
 import { formatRangeDate } from "@/lib/utils";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { IStyleTransaction } from "@/lib/type";
+import { format } from "date-fns";
 
 const FormSearchTransaction = () => {
   const [accordionValue, setAccordionValue] = useState<string | undefined>(
     "filter",
   );
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const searchUrl = searchParams.get("search") || "";
+  const typeUrl = searchParams.get("type") || "all";
+  const styleUrl = searchParams.get("style") || "all";
+  const fromUrl = searchParams.get("from");
+  const toUrl = searchParams.get("to");
+
   const form = useForm<FilterTransactionSchemaType>({
     resolver: zodResolver(FilterTransactionSchema),
     defaultValues: {
+      search: searchUrl,
+      type: typeUrl as "all" | "income" | "expense",
+      rangeDate: {
+        from: fromUrl ? new Date(fromUrl) : undefined,
+        to: toUrl ? new Date(toUrl) : undefined,
+      },
+      style: styleUrl as IStyleTransaction | "all",
+    },
+  });
+
+  const onSubmit = (data: FilterTransactionSchemaType) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (data.search) {
+      params.set("search", data.search);
+    } else {
+      params.delete("search");
+    }
+
+    if (data.type && data.type !== "all") {
+      params.set("type", data.type);
+    } else {
+      params.delete("type");
+    }
+
+    if (data.style && data.style !== "all") {
+      params.set("style", data.style);
+    } else {
+      params.delete("style");
+    }
+
+    if (data.rangeDate?.from) {
+      params.set("from", format(data.rangeDate.from, "dd-MM-yyyy"));
+    } else {
+      params.delete("from");
+    }
+
+    if (data.rangeDate?.to) {
+      params.set("to", format(data.rangeDate.to, "dd-MM-yyyy"));
+    } else {
+      params.delete("to");
+    }
+
+    params.delete("page");
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const handleReset = () => {
+    form.reset({
       search: "",
-      type: "income",
+      type: "all",
       rangeDate: {
         from: undefined,
         to: undefined,
       },
       style: "all",
-    },
-  });
+    });
 
-  const onSubmit = (data: FilterTransactionSchemaType) => {
-    console.log(data);
+    router.push(pathname);
   };
+
+  const hasFilter =
+    !!searchParams.get("page") ||
+    !!searchParams.get("search") ||
+    !!searchParams.get("from") ||
+    !!searchParams.get("to") ||
+    (searchParams.get("type") && searchParams.get("type") !== "all") ||
+    (searchParams.get("style") && searchParams.get("style") !== "all");
 
   const isOpen = accordionValue === "filter";
 
@@ -129,10 +198,10 @@ const FormSearchTransaction = () => {
                               <SelectValue placeholder="pick a type" />
                             </SelectTrigger>
                             <SelectContent>
-                              {["income", "expense"].map((item) => (
+                              {["all", "income", "expense"].map((item) => (
                                 <SelectItem key={item} value={item}>
                                   <span
-                                    className={`${item === "income" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"} py-.5 rounded-xl px-2 font-semibold`}
+                                    className={`${item === "income" ? "bg-green-100 text-green-600" : item == "expense" ? "bg-red-100 text-red-600" : "bg-lime-100 text-lime-700"} py-.5 rounded-xl px-2 font-semibold`}
                                   >
                                     {item}
                                   </span>
@@ -240,10 +309,23 @@ const FormSearchTransaction = () => {
                     <Button
                       type="submit"
                       variant="secondary"
-                      className="col-span-2 flex cursor-pointer items-center justify-center font-semibold"
+                      className={`${hasFilter ? "col-span-1" : "col-span-2"} flex cursor-pointer items-center justify-center gap-1 font-semibold`}
                     >
-                      search <Search />
+                      <span className="hidden md:block">search</span>
+                      <SearchIcon className="size-4" />
                     </Button>
+                    {hasFilter && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="flex cursor-pointer items-center justify-center gap-1 font-semibold"
+                        onClick={handleReset}
+                        disabled={!hasFilter}
+                      >
+                        <span className="hidden md:block">reset</span>
+                        <TimerResetIcon className="size-4" />
+                      </Button>
+                    )}
                   </FieldGroup>
                 </form>
               </div>

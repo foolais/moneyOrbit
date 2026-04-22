@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const AllTransactionPage = () => {
   return (
-    <main className="mx-auto w-full">
+    <main className="mx-auto max-h-dvh w-full">
       <header className="flex items-center justify-between sm:hidden">
         <Title />
         <Image

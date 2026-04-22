@@ -84,7 +84,7 @@ const TableTransaction = () => {
             <TableHead className="w-8">no</TableHead>
             <TableHead>date</TableHead>
             <TableHead>activity</TableHead>
-            <TableHead>amount</TableHead>
+            <TableHead className={isShowMd}>amount</TableHead>
             <TableHead className={isShowMd}>merchant</TableHead>
             <TableHead>type</TableHead>
             <TableHead className={isShowLg}>style</TableHead>
@@ -103,9 +103,9 @@ const TableTransaction = () => {
                   <TableCell>
                     {(page - 1) * ITEMS_PER_PAGE + index + 1}
                   </TableCell>
-                  <TableCell>{format(item.date, "PP")}</TableCell>
+                  <TableCell>{format(item.date, "dd MMM yyyy")}</TableCell>
                   <TableCell className="truncate">{item.activity}</TableCell>
-                  <TableCell className="truncate">
+                  <TableCell className={isShowMd}>
                     {formatPrice(item.amount)}
                   </TableCell>
                   <TableCell className={isShowMd}>{item.merchant}</TableCell>

@@ -253,3 +253,5 @@ export const amountButton = [
     label: "reset",
   },
 ];
+
+export const ITEMS_PER_PAGE = 5;

@@ -215,6 +215,7 @@ const DialogFormTransaction = ({
       }
 
       resetForm();
+      setOpenDialog(false);
     } catch (error) {
       console.log({ error });
     }
@@ -242,16 +243,14 @@ const DialogFormTransaction = ({
       }}
     >
       <DialogTrigger asChild>
-        <div onClick={() => setOpenDialog(true)}>
-          {trigger ?? (
-            <Button
-              className="cursor-pointer rounded-xl transition-all duration-300 hover:scale-105"
-              size="sm"
-            >
-              NEW <Plus className="size-5" />
-            </Button>
-          )}
-        </div>
+        {trigger ?? (
+          <Button
+            className="cursor-pointer rounded-xl transition-all duration-300 hover:scale-105"
+            size="sm"
+          >
+            NEW <Plus className="size-5" />
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="text-card-foreground bg-gray-200 sm:max-w-md">
         <form id="form-transaction" onSubmit={handleFormSubmit}>

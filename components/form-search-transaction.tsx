@@ -56,7 +56,7 @@ const FormSearchTransaction = () => {
   const isOpen = accordionValue === "filter";
 
   return (
-    <header>
+    <header className="mx-auto w-11/12 max-w-xl">
       <Accordion
         type="single"
         collapsible

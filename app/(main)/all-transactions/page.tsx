@@ -1,14 +1,23 @@
 import FormSearchTransaction from "@/components/form-search-transaction";
 import TableTransaction from "@/components/table-transaction";
 import Title from "@/components/title";
+import AstronoutMoon from "@/public/astronout-moon.webp";
+import Image from "next/image";
 
 const AllTransactionPage = () => {
   return (
-    <main className="mx-auto w-4/5 md:w-3/4">
-      <div className="sm:hidden">
+    <main className="mx-auto w-full">
+      <header className="flex items-center justify-between sm:hidden">
         <Title />
-      </div>
-      <div className="space-y-4 sm:mt-8">
+        <Image
+          src={AstronoutMoon}
+          alt="Astronout on the moon"
+          width={70}
+          height={70}
+          loading="eager"
+        />
+      </header>
+      <div className="mx-auto max-w-4xl space-y-2 sm:mt-8">
         <FormSearchTransaction />
         <TableTransaction />
       </div>

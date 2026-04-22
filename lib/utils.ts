@@ -49,3 +49,25 @@ export const formatRangeDate = (range?: { from?: Date; to?: Date }) => {
 
   return `${format(range.from, "PP")} - ${format(range.to, "PP")}`;
 };
+
+export const getPagination = (current: number, total: number) => {
+  const delta = 1;
+  const range: (number | string)[] = [];
+
+  for (
+    let i = Math.max(2, current - delta);
+    i <= Math.min(total - 1, current + delta);
+    i++
+  ) {
+    range.push(i);
+  }
+  if (current - delta > 2) {
+    range.unshift("...");
+  }
+
+  if (current + delta < total - 1) {
+    range.push("...");
+  }
+
+  return [1, ...range, total];
+};

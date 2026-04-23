@@ -28,7 +28,7 @@ export const styleTransactionConfig: Record<IStyleTransaction, StyleConfig> = {
     bgColor: "bg-purple-100",
     textColor: "text-purple-700",
   },
-  "food & beverage": {
+  foodie: {
     image: AstronoutFood,
     bgColor: "bg-orange-100",
     textColor: "text-orange-700",
@@ -83,7 +83,7 @@ export const dummyDataTransaction: ITransaction[] = [
     type: "expense",
     activity: "Booking Hotel",
     amount: 1200000,
-    date: "2026-04-18T10:30:00",
+    date: "2026-04-29T10:30:00",
     merchant: "Traveloka",
     style: "travel",
   },
@@ -97,7 +97,7 @@ export const dummyDataTransaction: ITransaction[] = [
   },
   {
     type: "expense",
-    style: "food & beverage",
+    style: "foodie",
     activity: "Lunch",
     amount: 45000,
     date: "2026-04-18T12:15:00",
@@ -105,11 +105,11 @@ export const dummyDataTransaction: ITransaction[] = [
   },
   {
     type: "expense",
-    style: "coffee",
-    activity: "Iced Latte",
+    style: "other",
+    activity: "Graduation",
     amount: 30000,
-    date: "2026-04-18T15:20:00",
-    merchant: "Starbucks",
+    date: "2026-05-02T15:20:00",
+    merchant: "Binus",
   },
 
   // YESTERDAY
@@ -159,7 +159,7 @@ export const dummyDataTransaction: ITransaction[] = [
   },
   {
     type: "expense",
-    style: "food & beverage",
+    style: "foodie",
     activity: "Dinner",
     amount: 80000,
     date: "2026-04-15T19:25:00",

@@ -70,7 +70,7 @@ const ContainerHomeTransaction = () => {
           <DialogFormTransaction />
         </div>
       </header>
-      <ul className="mx-auto mb-8 w-11/12 space-y-4">
+      <ul className="mx-auto mb-8 space-y-4 md:w-11/12">
         {Object.entries(groupedData).map(([label, items]) => (
           <li key={label}>
             <p className="mb-2 text-center text-sm font-semibold text-white">

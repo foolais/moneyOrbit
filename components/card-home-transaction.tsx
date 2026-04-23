@@ -41,17 +41,19 @@ const CardHomeTransaction = ({
                   loading="eager"
                 />
                 <div className="grid w-full grid-cols-2 items-center gap-x-4 gap-y-1">
-                  <h2 className="font-semibold tracking-wider">{activity}</h2>
+                  <h2 className="truncate text-left font-semibold tracking-wider">
+                    {activity}
+                  </h2>
 
                   <p
-                    className={`justify-self-end font-bold ${
+                    className={`justify-self-end truncate font-bold ${
                       type === "expense" ? "text-destructive" : "text-black"
                     }`}
                   >
                     {type === "expense" ? "-" : "+"}
                     {formatPrice(amount)}
                   </p>
-                  <span className="text-sm font-semibold text-slate-400">
+                  <span className="text-left text-sm font-semibold text-slate-400">
                     {merchant}
                   </span>
                   <span

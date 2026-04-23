@@ -6,6 +6,7 @@ import {
   Plus,
   Send,
   Sparkles,
+  Trash,
   Upload,
   XIcon,
 } from "lucide-react";
@@ -230,8 +231,6 @@ const DialogFormTransaction = ({
   const isDirty = isEdit && !form.formState.isDirty;
 
   const isDisabled = isSubmitting;
-
-  console.log({ initialData });
 
   return (
     <Dialog
@@ -586,12 +585,18 @@ const DialogFormTransaction = ({
             </FieldGroup>
           )}
           <div
-            className={`flex items-center justify-end ${isSubmitting && "hidden"}`}
+            className={`mt-4 flex items-center justify-between ${isSubmitting && "hidden"}`}
           >
+            {isEdit && (
+              <Button type="button" variant="destructive">
+                <span>delete</span>
+                <Trash />
+              </Button>
+            )}
             <Button
               type="submit"
               variant="secondary"
-              className="mt-4 flex cursor-pointer items-center justify-center"
+              className="flex cursor-pointer items-center justify-center"
               disabled={isDisabled || isDirty}
             >
               {isEdit ? "update transaction" : "create transaction"}

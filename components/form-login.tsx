@@ -16,7 +16,6 @@ const FormLogin = () => {
   });
 
   const onSubmit = (data: LoginSchemaType) => {
-    console.log("aaa");
     console.log(data);
   };
 

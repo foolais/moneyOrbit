@@ -14,7 +14,7 @@ export type IFilterAnalytic = "all" | "income" | "expense";
 export type IStyleTransaction =
   | "travel"
   | "gaming"
-  | "food & beverage"
+  | "foodie"
   | "coffee"
   | "entertainment"
   | "shopping"

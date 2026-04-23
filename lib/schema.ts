@@ -34,7 +34,7 @@ export const TransactionSchema = z.object({
   style: z.enum([
     "travel",
     "gaming",
-    "food & beverage",
+    "foodie",
     "coffee",
     "entertainment",
     "shopping",
@@ -70,7 +70,7 @@ export const FilterTransactionSchema = z.object({
       "all",
       "travel",
       "gaming",
-      "food & beverage",
+      "foodie",
       "coffee",
       "entertainment",
       "shopping",

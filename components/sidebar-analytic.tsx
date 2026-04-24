@@ -11,7 +11,7 @@ const SidebarAnalytic = () => {
       <SidebarAnalyticHeader />
       <div>
         <Button variant="secondary" className="rounded-xl" size="sm">
-          Activity
+          activity
         </Button>
         <div className="my-4 space-y-1">
           {dataStyleTransaction.map((style) => (

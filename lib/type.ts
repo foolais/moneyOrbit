@@ -5,6 +5,8 @@ export type ITransaction = {
   amount: number;
   date: string;
   merchant: string;
+  description?: string;
+  image?: string;
 };
 
 export type GroupedTransactions = Record<string, ITransaction[]>;

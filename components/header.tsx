@@ -37,7 +37,7 @@ const Header = () => {
     },
     {
       name: "profile",
-      href: "/home",
+      href: "/profile",
       icon: User,
     },
   ];

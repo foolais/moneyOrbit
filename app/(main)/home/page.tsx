@@ -11,7 +11,7 @@ const DashboardPage = () => {
         </div>
         <ContainerHomeTransaction />
       </section>
-      <section className="hidden rounded-xl p-4 md:block md:w-sm lg:w-lg">
+      <section className="hidden space-y-4 rounded-xl p-4 md:block md:w-sm lg:w-lg">
         <WealthAnalytic />
         <SidebarAnalytic />
       </section>

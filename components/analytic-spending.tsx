@@ -19,7 +19,7 @@ const AnalyticSpending = ({
       <Button variant="secondary" className="mb-2 rounded-xl" size="sm">
         top {type === "expense" ? "spending" : "earning"}
       </Button>
-      <Card className="w-md rounded-2xl shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg md:w-sm">
+      <Card className="w-full rounded-2xl shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg md:w-sm">
         <CardContent className="flex flex-col gap-2">
           <div className="text-muted-foreground flex items-center justify-between text-sm">
             <p>{format(transaction.date, "dd MMM yyyy")}</p>

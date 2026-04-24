@@ -587,12 +587,14 @@ const DialogFormTransaction = ({
           <div
             className={`mt-4 flex items-center justify-between ${isSubmitting && "hidden"}`}
           >
-            {isEdit && (
-              <Button type="button" variant="destructive">
-                <span>delete</span>
-                <Trash />
-              </Button>
-            )}
+            <div>
+              {isEdit && (
+                <Button type="button" variant="destructive">
+                  <span>delete</span>
+                  <Trash />
+                </Button>
+              )}
+            </div>
             <Button
               type="submit"
               variant="secondary"

@@ -142,7 +142,9 @@ const TableTransaction = () => {
             <PaginationPrevious
               onClick={() => handlePageChange(Math.max(1, page - 1))}
               className={
-                page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
+                page === 1
+                  ? "pointer-events-none text-white opacity-50"
+                  : "cursor-pointer text-white"
               }
             />
           </PaginationItem>
@@ -160,7 +162,9 @@ const TableTransaction = () => {
                 <PaginationLink
                   onClick={() => handlePageChange(+p)}
                   className={`cursor-pointer ${
-                    page === p ? "bg-secondary text-secondary-foreground" : ""
+                    page === p
+                      ? "bg-secondary text-secondary-foreground"
+                      : "text-white"
                   }`}
                 >
                   {p}
@@ -172,7 +176,7 @@ const TableTransaction = () => {
             className={
               page === totalPages
                 ? "pointer-events-none opacity-50"
-                : "cursor-pointer"
+                : "cursor-pointer text-white"
             }
           >
             <PaginationNext

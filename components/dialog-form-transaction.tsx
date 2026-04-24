@@ -253,9 +253,9 @@ const DialogFormTransaction = ({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="text-card-foreground bg-gray-200 sm:max-w-md">
+      <DialogContent className="text-card-foreground bg-gray-200 md:max-w-md">
         <form id="form-transaction" onSubmit={handleFormSubmit}>
-          <div className="absolute -top-28 right-0 h-32 w-32 sm:-top-32 sm:w-40">
+          <div className="absolute -top-28 right-0 h-32 w-32 md:-top-32 md:w-40">
             <Image
               src={AstronoutLaptop}
               alt="Astronout on the moon"

@@ -43,15 +43,15 @@ const Header = () => {
   ];
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-center gap-8 px-4 sm:absolute sm:top-4 sm:bottom-auto sm:mx-auto sm:max-w-6xl">
-      <Title className="hidden sm:block" />
-      <div className="bg-card border-secondary relative mx-auto flex min-w-sm items-center justify-evenly gap-2 rounded-t-xl border-2 px-2 py-0.5 shadow-lg sm:mx-0 sm:rounded-2xl sm:px-3">
+    <div className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-center gap-8 px-4 md:absolute md:top-4 md:bottom-auto md:mx-auto md:max-w-6xl">
+      <Title className="hidden md:block" />
+      <div className="bg-card border-secondary relative mx-auto flex min-w-sm items-center justify-evenly gap-2 rounded-t-xl border-2 px-2 py-0.5 shadow-lg md:mx-0 md:rounded-2xl md:px-3">
         {headerItems.map((item) => {
           if (item.isCenter) {
             return (
               <div
                 key={item.name}
-                className="flex flex-1 justify-center sm:hidden"
+                className="flex flex-1 justify-center md:hidden"
               >
                 <div className="absolute -top-6 h-10 w-10">
                   <HeaderButtonAddTransaction />
@@ -64,16 +64,16 @@ const Header = () => {
             <Link
               href={item.href}
               key={item.name}
-              className="group hover:bg-muted flex flex-1 items-center justify-center gap-1 rounded-xl px-2 py-1.5 transition-all sm:flex-none"
+              className="group hover:bg-muted flex flex-1 items-center justify-center gap-1 rounded-xl px-2 py-1.5 transition-all md:flex-none"
             >
               <Button
                 variant="secondary"
                 size="icon"
-                className="group-hover:bg-secondary/70 cursor-pointer transition group-hover:scale-105 sm:hidden"
+                className="group-hover:bg-secondary/70 cursor-pointer transition group-hover:scale-105 md:hidden"
               >
                 <item.icon className="size-4" />
               </Button>
-              <p className="bg-secondary hidden rounded-full px-2 py-0.5 text-sm font-semibold transition-all group-hover:scale-105 sm:block">
+              <p className="bg-secondary hidden rounded-full px-2 py-0.5 text-sm font-semibold transition-all group-hover:scale-105 md:block">
                 {item.name}
               </p>
             </Link>

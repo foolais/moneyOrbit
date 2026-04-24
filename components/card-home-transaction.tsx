@@ -29,7 +29,9 @@ const CardHomeTransaction = ({
       initialData={initialData}
       trigger={
         <button type="button" className="w-full">
-          <Card className="cursor-pointer py-1 transition-all duration-300 hover:scale-105">
+          <Card
+            className={`cursor-pointer py-1 transition-all duration-300 hover:scale-105 ${styleTransactionConfig[style].bgColor}`}
+          >
             <CardContent className="flex items-center justify-between">
               <div className="flex w-full items-center gap-2">
                 <Image
@@ -57,7 +59,7 @@ const CardHomeTransaction = ({
                     {merchant}
                   </span>
                   <span
-                    className={`justify-self-end rounded-full px-2 py-0.5 text-sm font-semibold ${styleTransactionConfig[style].textColor} ${styleTransactionConfig[style].bgColor}`}
+                    className={`justify-self-end rounded-full px-2 py-0.5 text-sm font-semibold ${styleTransactionConfig[style].textColor} bg-white`}
                   >
                     {style}
                   </span>

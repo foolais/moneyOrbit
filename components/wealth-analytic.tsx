@@ -10,8 +10,9 @@ import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
 import StarrySky from "@/public/sky.gif";
+import { Card, CardContent } from "./ui/card";
 
-const SidebarAnalyticHeader = () => {
+const WealthAnalytic = () => {
   const [filter, setFilter] = useState<IFilterAnalytic>("all");
   const onChangeFilter = (value: IFilterAnalytic) => {
     setFilter(value);
@@ -24,15 +25,15 @@ const SidebarAnalyticHeader = () => {
         ? AstronoutMoney
         : AstronoutBagMoney;
 
-  const textColor =
+  const wealthColor =
     filter === "income"
-      ? "text-accent"
+      ? "accent"
       : filter === "expense"
-        ? "text-destructive"
-        : "text-white";
+        ? "destructive"
+        : "secondary";
 
   return (
-    <header className="mt-1">
+    <div>
       <section className="grid items-center gap-2">
         <div className="mb-2 flex items-center gap-2">
           <Button variant="secondary" className="rounded-xl" size="sm">
@@ -54,22 +55,32 @@ const SidebarAnalyticHeader = () => {
             })}
           </div>
         </div>
-        <div className="flex items-center gap-1">
-          <Image
-            src={wealthImage}
-            alt="Astronout bag money"
-            width={80}
-            height={80}
-            className="object-cover"
-            loading="eager"
-          />
-          <div className="flex gap-1">
-            <h2 className={`text-2xl font-semibold lg:text-3xl ${textColor}`}>
-              {formatPrice(100000000)}
-            </h2>
-            <Sparkles className={`size-5 ${textColor}`} />
-          </div>
-        </div>
+        <Card className="transition-all duration-300 hover:scale-105">
+          <CardContent className="flex items-center gap-4">
+            <div
+              className={`bg-${wealthColor} relative h-20 w-20 rounded-full`}
+            >
+              <Image
+                src={wealthImage}
+                alt="Astronout bag money"
+                fill
+                className="object-cover"
+                loading="eager"
+              />
+            </div>
+            <div className="flex flex-col space-y-1">
+              <span className="font-semibold md:text-xl">wealth</span>
+              <div className="flex gap-1">
+                <h2
+                  className={`text-lg font-bold md:text-2xl text-${wealthColor}`}
+                >
+                  {formatPrice(100000000)}
+                </h2>
+                <Sparkles className={`size-5 text-${wealthColor}`} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </section>
       <section>
         <div className="border-secondary relative my-4 h-36 w-full rounded-xl border-2">
@@ -83,8 +94,8 @@ const SidebarAnalyticHeader = () => {
           />
         </div>
       </section>
-    </header>
+    </div>
   );
 };
 
-export default SidebarAnalyticHeader;
+export default WealthAnalytic;

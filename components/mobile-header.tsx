@@ -4,7 +4,7 @@ import AstronoutMoon from "@/public/astronout-moon.webp";
 
 const MobileHeader = () => {
   return (
-    <header className="flex items-center justify-between sm:hidden">
+    <header className="flex items-center justify-between md:hidden">
       <Title />
       <Image
         src={AstronoutMoon}

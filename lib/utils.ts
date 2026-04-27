@@ -22,24 +22,6 @@ export function formatRupiahOnInput(value: string) {
   }).format(Number(value));
 }
 
-export const uploadToCloudinary = async (file: File) => {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", "expense-tracker");
-
-  const res = await fetch("asjdaskjhsdgaskjhsdgaklink", {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to upload image");
-  }
-
-  const data = await res.json();
-  return data.secure_url as string;
-};
-
 export const formatRangeDate = (range?: { from?: Date; to?: Date }) => {
   if (!range?.from) return "Pick a date";
 

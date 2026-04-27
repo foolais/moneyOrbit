@@ -20,19 +20,14 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
-import {
-  Controller,
-  ControllerRenderProps,
-  useForm,
-  useWatch,
-} from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import Image from "next/image";
 import AstronoutLaptop from "@/public/working-laptop.webp";
 import AstronoutRocket from "@/public/astronout-rocket.webp";
 import AstronoutRunMoney from "@/public/astronout-run-money.webp";
-import { formatRupiahOnInput, uploadToCloudinary } from "@/lib/utils";
+import { formatRupiahOnInput } from "@/lib/utils";
 import {
   amountButton,
   dataStyleTransaction,
@@ -52,11 +47,11 @@ import {
 import {
   InputGroup,
   InputGroupAddon,
-  InputGroupInput,
   InputGroupText,
   InputGroupTextarea,
 } from "./ui/input-group";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { CldUploadWidget } from "next-cloudinary";
 
 type IDialogFormTransaction = {
   mode?: "create" | "edit";
@@ -90,13 +85,7 @@ const DialogFormTransaction = ({
   });
 
   const imageData = useWatch({ name: "image", control: form.control });
-  const previewImage =
-    imageData instanceof File
-      ? URL.createObjectURL(imageData)
-      : typeof imageData === "string"
-        ? imageData
-        : null;
-  const fileRef = useRef<HTMLInputElement | null>(null);
+  const previewImage = typeof imageData === "string" ? imageData : null;
 
   useEffect(() => {
     if (initialData && openDialog) {
@@ -107,14 +96,6 @@ const DialogFormTransaction = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialData, openDialog]);
-
-  useEffect(() => {
-    return () => {
-      if (imageData instanceof File) {
-        URL.revokeObjectURL(previewImage!);
-      }
-    };
-  }, [imageData, previewImage]);
 
   const setColor = (label: string) => {
     return label.includes("+")
@@ -143,79 +124,15 @@ const DialogFormTransaction = ({
     }
   };
 
-  const resetForm = () => {
-    form.reset();
-    if (fileRef.current) fileRef.current.value = "";
-  };
-
-  const onChangeImage = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: ControllerRenderProps<TransactionSchemaType, "image">,
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsUploadingImage(true);
-
-    try {
-      if (file.type === "image/heic" || file.name.endsWith(".heic")) {
-        try {
-          const heic2any = (await import("heic2any")).default;
-
-          const convertedBlob = await heic2any({
-            blob: file,
-            toType: "image/jpeg",
-          });
-
-          const blob = Array.isArray(convertedBlob)
-            ? convertedBlob[0]
-            : convertedBlob;
-
-          const convertedFile = new File(
-            [blob as Blob],
-            file.name.replace(".heic", ".jpg"),
-            {
-              type: "image/jpeg",
-            },
-          );
-
-          field.onChange(convertedFile);
-        } catch (error) {
-          console.log("HEIC conversion failed", error);
-        }
-      } else {
-        field.onChange(file);
-      }
-    } catch (error) {
-      console.log({ error });
-    } finally {
-      setIsUploadingImage(false);
-    }
-  };
-
   const onSubmit = async (data: TransactionSchemaType) => {
     try {
-      // let imageUrl = "";
-
-      // // 🔥 upload if File
-      // if (data.image instanceof File) {
-      //   imageUrl = await uploadToCloudinary(data.image);
-      // }
-
-      // const payload = {
-      //   ...data,
-      //   image: imageUrl
-      // }
-
-      // console.log({ imageUrl });
-
       if (isEdit) {
         console.log("UPDATE", data);
       } else {
         console.log("CREATE", data);
       }
 
-      resetForm();
+      form.reset();
       setOpenDialog(false);
     } catch (error) {
       console.log({ error });
@@ -227,7 +144,7 @@ const DialogFormTransaction = ({
     await form.handleSubmit(onSubmit)(e);
   };
 
-  const isSubmitting = form.formState.isSubmitting;
+  const isSubmitting = form.formState.isSubmitting || isUploadingImage;
   const isDirty = isEdit && !form.formState.isDirty;
 
   const isDisabled = isSubmitting;
@@ -239,7 +156,7 @@ const DialogFormTransaction = ({
         if (!isSubmitting) {
           setOpenDialog(val);
 
-          if (!val) resetForm();
+          if (!val) form.reset();
         }
       }}
     >
@@ -253,13 +170,17 @@ const DialogFormTransaction = ({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="text-card-foreground bg-gray-200 md:max-w-md">
+      <DialogContent
+        className="text-card-foreground bg-gray-200 md:max-w-md"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <form id="form-transaction" onSubmit={handleFormSubmit}>
           <div className="absolute -top-28 right-0 h-32 w-32 md:-top-32 md:w-40">
             <Image
               src={AstronoutLaptop}
               alt="Astronout on the moon"
               fill
+              sizes="auto"
               loading="eager"
               className="object-cover"
             />
@@ -523,65 +444,108 @@ const DialogFormTransaction = ({
               <Controller
                 name="image"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>
-                      {isEdit && imageData
-                        ? "image (click to change image)"
-                        : "image"}
-                    </FieldLabel>
-                    <InputGroup className="cursor-pointer bg-white">
-                      <InputGroupInput
-                        ref={fileRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => onChangeImage(e, field)}
-                        disabled={isDisabled}
-                      />
-                      <InputGroupAddon align="inline-end">
-                        <Upload />
-                      </InputGroupAddon>
-                    </InputGroup>
-                  </Field>
-                )}
+                render={({ field, fieldState }) => {
+                  const handleOpen = (open: () => void) => {
+                    open();
+                    document.body.style.pointerEvents = "auto";
+                  };
+
+                  return (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel>
+                        {field.value ? "image (change or remove)" : "Image"}
+                      </FieldLabel>
+
+                      {!field.value ? (
+                        <CldUploadWidget
+                          uploadPreset="money-orbit"
+                          options={{
+                            multiple: false,
+                            maxFiles: 1,
+                            resourceType: "image",
+                            clientAllowedFormats: [
+                              "jpg",
+                              "jpeg",
+                              "png",
+                              "webp",
+                              "heic",
+                            ],
+                            maxFileSize: 5000000,
+                          }}
+                          onUpload={() => setIsUploadingImage(true)}
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          onSuccess={(result: any) => {
+                            field.onChange(result.info.secure_url);
+                            setIsUploadingImage(false);
+                          }}
+                          onClose={() => setIsUploadingImage(false)}
+                        >
+                          {({ open }) => (
+                            <Button
+                              type="button"
+                              onClick={() => handleOpen(open!)}
+                              className="w-full cursor-pointer"
+                              disabled={isDisabled}
+                            >
+                              <Upload className="mr-2" />
+                              upload image
+                            </Button>
+                          )}
+                        </CldUploadWidget>
+                      ) : (
+                        <div className="relative mt-3 h-60 w-full">
+                          <Image
+                            src={field.value}
+                            alt="preview"
+                            fill
+                            sizes="auto"
+                            loading="eager"
+                            className="rounded-xl border-2 object-cover"
+                          />
+                          <div className="absolute top-2 left-2">
+                            <CldUploadWidget
+                              uploadPreset="money-orbit"
+                              options={{ multiple: false, maxFiles: 1 }}
+                              onUpload={() => setIsUploadingImage(true)}
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              onSuccess={(result: any) => {
+                                field.onChange(result.info.secure_url);
+                                setIsUploadingImage(false);
+                              }}
+                              onClose={() => setIsUploadingImage(false)}
+                            >
+                              {({ open }) => (
+                                <Button
+                                  type="button"
+                                  size="xs"
+                                  onClick={() => handleOpen(open!)}
+                                  className="cursor-pointer"
+                                >
+                                  change
+                                </Button>
+                              )}
+                            </CldUploadWidget>
+                          </div>
+                          <div className="absolute top-2 right-2">
+                            <Button
+                              variant="destructive"
+                              type="button"
+                              size="xs"
+                              onClick={() => field.onChange(undefined)}
+                              className="cursor-pointer"
+                            >
+                              <XIcon />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                      {fieldState.error && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  );
+                }}
               />
-              {isUploadingImage && (
-                <div className="relative my-4 w-fit">
-                  <Image
-                    src={AstronoutRocket}
-                    alt="uploading image"
-                    width={100}
-                    height={100}
-                    className="animate-bounce object-cover"
-                  />
-                  <p className="text-muted-foreground animate-pulse text-xs">
-                    Uploading image...
-                  </p>
-                </div>
-              )}
-              {previewImage && (
-                <div className="relative w-fit">
-                  <Image
-                    src={previewImage}
-                    alt="preview"
-                    width={200}
-                    height={200}
-                    className="rounded-xl border-2 object-cover"
-                  />
-                  <Button
-                    variant="destructive"
-                    type="button"
-                    size="xs"
-                    onClick={() => {
-                      form.setValue("image", undefined);
-                      if (fileRef.current) fileRef.current.value = "";
-                    }}
-                    className="absolute top-1 right-1 cursor-pointer rounded-xl"
-                  >
-                    <XIcon />
-                  </Button>
-                </div>
-              )}
             </FieldGroup>
           )}
           <div

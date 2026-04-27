@@ -1,7 +1,19 @@
 import Header from "@/components/header";
 import MobileHeader from "@/components/mobile-header";
+import { createClient } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
 
-const MainLayout = ({ children }: { children: React.ReactNode }) => {
+const MainLayout = async ({ children }: { children: React.ReactNode }) => {
+  const supabase = await createClient();
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    redirect("/auth");
+  }
+
   return (
     <div className="grid p-4 md:p-6">
       <MobileHeader />

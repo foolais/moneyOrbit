@@ -1,11 +1,17 @@
 import Image from "next/image";
 import AstronoutGundam from "@/public/astronout-gundam.webp";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { formatPrice } from "@/lib/utils";
 import { randomInt } from "crypto";
+import { createClient } from "@/lib/supabase-server";
+import LogoutButton from "@/components/logout-button";
 
-const ProfilePage = () => {
+const ProfilePage = async () => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <main className="mx-auto mt-4 md:mt-8 xl:w-11/12 2xl:max-w-7xl">
       <Card className="mx-auto w-full max-w-md">
@@ -20,7 +26,7 @@ const ProfilePage = () => {
             />
           </div>
           <p className="text-muted-foreground text-center font-semibold">
-            wahyu.tesa@gmail.com
+            {user?.email}
           </p>
           <div className="flex-1 border-t-2 pt-4 text-center">
             <p className="text-center text-sm font-semibold">transactions</p>
@@ -55,9 +61,7 @@ const ProfilePage = () => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full cursor-pointer" variant="destructive">
-            logout
-          </Button>
+          <LogoutButton />
         </CardFooter>
       </Card>
     </main>

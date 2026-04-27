@@ -182,7 +182,10 @@ const DialogFormTransaction = ({
         if (!isSubmitting) {
           setOpenDialog(val);
 
-          if (!val) form.reset();
+          if (!val) {
+            form.reset();
+            router.refresh();
+          }
         }
       }}
     >

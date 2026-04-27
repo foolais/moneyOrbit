@@ -1,4 +1,5 @@
 export type ITransaction = {
+  id: string;
   type: "income" | "expense";
   style: IStyleTransaction;
   activity: string;

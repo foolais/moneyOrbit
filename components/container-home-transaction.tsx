@@ -3,7 +3,6 @@ import { Button } from "./ui/button";
 import AstronoutStyle from "@/public/astronout-style.webp";
 import Image from "next/image";
 import CardHomeTransaction from "./card-home-transaction";
-import { dummyDataTransaction } from "@/lib/data";
 import DialogFormTransaction from "./dialog-form-transaction";
 import { createClient } from "@/lib/supabase-server";
 import { toast } from "sonner";
@@ -97,6 +96,7 @@ const ContainerHomeTransaction = async () => {
               {items.map((item, index) => (
                 <li key={index}>
                   <CardHomeTransaction
+                    id={item.id}
                     type={item.type}
                     style={item.style}
                     activity={item.activity}

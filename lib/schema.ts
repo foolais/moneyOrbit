@@ -50,6 +50,7 @@ export const TransactionSchema = z.object({
     .min(5, "must be at least 5 characters")
     .max(150, "must be at most 150 characters")
     .optional()
+    .nullable()
     .or(z.literal("")),
   image: z.any().optional(),
 });

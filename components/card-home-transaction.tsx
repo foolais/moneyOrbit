@@ -6,9 +6,6 @@ import Image from "next/image";
 import { formatPrice } from "@/lib/utils";
 import { styleTransactionConfig } from "@/lib/data";
 import DialogFormTransaction from "./dialog-form-transaction";
-import { useState } from "react";
-import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
 
 const CardHomeTransaction = ({
   id,
@@ -17,47 +14,13 @@ const CardHomeTransaction = ({
   activity,
   amount,
   merchant,
-  date,
 }: ITransaction) => {
-  const [initialData, setInitialData] = useState<ITransaction>({
-    id,
-    type,
-    style,
-    activity,
-    amount,
-    merchant,
-    date,
-  });
-
-  const fetchTransaction = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("transactions")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) throw error;
-
-      if (data) {
-        setInitialData(data);
-      }
-    } catch (error) {
-      console.log("error fetching transaction", error);
-      toast.error("error fetching transaction");
-    }
-  };
-
   return (
     <DialogFormTransaction
       mode="edit"
-      initialData={initialData}
+      transactionId={id}
       trigger={
-        <button
-          type="button"
-          className="w-full"
-          onClick={() => fetchTransaction()}
-        >
+        <button type="button" className="w-full">
           <Card
             className={`cursor-pointer py-1 transition-all duration-300 hover:scale-105 ${styleTransactionConfig[style].bgColor}`}
           >

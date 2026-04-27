@@ -57,20 +57,21 @@ import { useRouter } from "next/navigation";
 
 type IDialogFormTransaction = {
   mode?: "create" | "edit";
-  initialData?: Partial<TransactionSchemaType>;
   trigger?: React.ReactNode;
+  transactionId?: string;
 };
 
 const DialogFormTransaction = ({
   mode = "create",
-  initialData,
   trigger,
+  transactionId,
 }: IDialogFormTransaction) => {
   const isEdit = mode === "edit";
   const router = useRouter();
 
   const [openDialog, setOpenDialog] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [initialAmount, setInitialAmount] = useState(0);
 
   const form = useForm<TransactionSchemaType>({
     resolver: zodResolver(TransactionSchema),
@@ -78,24 +79,40 @@ const DialogFormTransaction = ({
       type: "income",
       activity: "",
       amount: 0,
-      date: initialData?.date ?? new Date().toISOString(),
+      date: new Date().toISOString(),
       style: "other",
       merchant: "",
       description: "",
       image: undefined,
-      ...initialData,
     },
   });
 
   useEffect(() => {
-    if (initialData && openDialog) {
-      form.reset({
-        ...form.getValues(),
-        ...initialData,
-      });
+    const fetchTransaction = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("transactions")
+          .select("*")
+          .eq("id", transactionId)
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          form.reset(data);
+          setInitialAmount(data.amount);
+        }
+      } catch (error) {
+        console.log("error fetching transaction", error);
+        toast.error("error fetching transaction");
+      }
+    };
+
+    if (isEdit && transactionId) {
+      fetchTransaction();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialData, openDialog]);
+  }, [isEdit]);
 
   const setColor = (label: string) => {
     return label.includes("+")
@@ -109,7 +126,7 @@ const DialogFormTransaction = ({
     const current = form.getValues("amount") || 0;
 
     if (item.label === "reset") {
-      form.setValue("amount", isEdit ? initialData?.amount || 0 : 0, {
+      form.setValue("amount", isEdit ? initialAmount || 0 : 0, {
         shouldDirty: true,
       });
       return;
@@ -131,9 +148,25 @@ const DialogFormTransaction = ({
     try {
       if (isEdit) {
         try {
-          console.log("UPDATE", data);
+          console.log({ data });
+          const { error } = await supabase
+            .from("transactions")
+            .update({
+              ...data,
+              description: data.description || null,
+              image: data.image || null,
+            })
+            .eq("id", transactionId);
+
+          if (error) throw error;
+
+          toast.success("transaction updated successfully");
+          form.reset();
+          setOpenDialog(false);
+          router.refresh();
         } catch (error) {
           console.log("Error updating transaction", error);
+          toast.error("Error updating transaction");
         }
       } else {
         try {
@@ -151,7 +184,7 @@ const DialogFormTransaction = ({
 
           if (error) throw error;
 
-          toast.success("Transaction created successfully");
+          toast.success("transaction created successfully");
           form.reset();
           setOpenDialog(false);
           router.refresh();
@@ -184,7 +217,6 @@ const DialogFormTransaction = ({
 
           if (!val) {
             form.reset();
-            router.refresh();
           }
         }
       }}
@@ -560,7 +592,11 @@ const DialogFormTransaction = ({
                               variant="destructive"
                               type="button"
                               size="xs"
-                              onClick={() => field.onChange(undefined)}
+                              onClick={() =>
+                                form.setValue("image", undefined, {
+                                  shouldDirty: true,
+                                })
+                              }
                               className="cursor-pointer"
                             >
                               <XIcon />

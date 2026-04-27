@@ -95,7 +95,6 @@ const TableTransaction = () => {
             <DialogFormTransaction
               key={(page - 1) * ITEMS_PER_PAGE + index + 1}
               mode="edit"
-              initialData={item}
               trigger={
                 <TableRow
                   className={`${styleTransactionConfig[item.style].bgColor} hover:${styleTransactionConfig[item.style].textColor.replace("text", "bg")} cursor-pointer`}

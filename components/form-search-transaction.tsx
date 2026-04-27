@@ -156,6 +156,7 @@ const FormSearchTransaction = () => {
                   src={NightFireflies}
                   alt="Night Fireflies"
                   fill
+                  sizes="auto"
                   loading="eager"
                   unoptimized
                   className="rounded-xl object-cover"

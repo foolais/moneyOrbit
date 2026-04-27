@@ -77,6 +77,8 @@ const WealthAnalytic = () => {
                 src={wealthImage}
                 alt="wealth"
                 fill
+                sizes="auto"
+                loading="eager"
                 className="rounded-full object-cover"
               />
             </div>

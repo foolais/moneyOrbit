@@ -20,12 +20,11 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import Image from "next/image";
 import AstronoutLaptop from "@/public/working-laptop.webp";
-import AstronoutRocket from "@/public/astronout-rocket.webp";
 import AstronoutRunMoney from "@/public/astronout-run-money.webp";
 import { formatRupiahOnInput } from "@/lib/utils";
 import {
@@ -52,6 +51,9 @@ import {
 } from "./ui/input-group";
 import { useEffect, useState } from "react";
 import { CldUploadWidget } from "next-cloudinary";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type IDialogFormTransaction = {
   mode?: "create" | "edit";
@@ -65,6 +67,7 @@ const DialogFormTransaction = ({
   trigger,
 }: IDialogFormTransaction) => {
   const isEdit = mode === "edit";
+  const router = useRouter();
 
   const [openDialog, setOpenDialog] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -83,9 +86,6 @@ const DialogFormTransaction = ({
       ...initialData,
     },
   });
-
-  const imageData = useWatch({ name: "image", control: form.control });
-  const previewImage = typeof imageData === "string" ? imageData : null;
 
   useEffect(() => {
     if (initialData && openDialog) {
@@ -125,15 +125,41 @@ const DialogFormTransaction = ({
   };
 
   const onSubmit = async (data: TransactionSchemaType) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     try {
       if (isEdit) {
-        console.log("UPDATE", data);
+        try {
+          console.log("UPDATE", data);
+        } catch (error) {
+          console.log("Error updating transaction", error);
+        }
       } else {
-        console.log("CREATE", data);
-      }
+        try {
+          const { error } = await supabase.from("transactions").insert({
+            user_id: user?.id,
+            type: data.type,
+            activity: data.activity,
+            amount: data.amount,
+            date: data.date,
+            style: data.style,
+            merchant: data.merchant,
+            description: data.description || null,
+            image: data.image || null,
+          });
 
-      form.reset();
-      setOpenDialog(false);
+          if (error) throw error;
+
+          toast.success("Transaction created successfully");
+          form.reset();
+          setOpenDialog(false);
+          router.refresh();
+        } catch (error) {
+          console.log("Error creating transaction", error);
+          toast.error("Error creating transaction");
+        }
+      }
     } catch (error) {
       console.log({ error });
     }

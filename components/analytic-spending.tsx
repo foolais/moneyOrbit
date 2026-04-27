@@ -44,6 +44,7 @@ const AnalyticSpending = ({
                 alt={transaction.style}
                 fill
                 loading="eager"
+                sizes="auto"
               />
             </div>
             <div className="flex flex-col">

@@ -21,6 +21,8 @@ const ProfilePage = async () => {
               src={AstronoutGundam}
               alt="Profile"
               fill
+              sizes="auto"
+              loading="eager"
               className="object-cover"
               priority
             />

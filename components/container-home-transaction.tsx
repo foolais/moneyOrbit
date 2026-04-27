@@ -5,8 +5,24 @@ import Image from "next/image";
 import CardHomeTransaction from "./card-home-transaction";
 import { dummyDataTransaction } from "@/lib/data";
 import DialogFormTransaction from "./dialog-form-transaction";
+import { createClient } from "@/lib/supabase-server";
+import { toast } from "sonner";
 
-const ContainerHomeTransaction = () => {
+const ContainerHomeTransaction = async () => {
+  const supabase = await createClient();
+
+  const { data: transactions, error } = await supabase
+    .from("transactions")
+    .select("*")
+    .order("date", { ascending: false })
+    .limit(20);
+
+  if (error) {
+    console.log("Error fetching transactions", error);
+    toast.error("Error fetching transactions");
+    return <div />;
+  }
+
   const groupTransactions = (data: ITransaction[]): GroupedTransactions => {
     const groups: GroupedTransactions = {};
 
@@ -44,11 +60,7 @@ const ContainerHomeTransaction = () => {
     return groups;
   };
 
-  const sortedData = [...dummyDataTransaction].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
-
-  const groupedData = groupTransactions(sortedData);
+  const groupedData = groupTransactions(transactions);
 
   return (
     <div>
@@ -71,6 +83,11 @@ const ContainerHomeTransaction = () => {
         </div>
       </header>
       <ul className="mx-auto mb-8 space-y-4 md:w-11/12">
+        {transactions.length === 0 && (
+          <p className="text-muted-foreground text-center text-sm">
+            no transactions found.
+          </p>
+        )}
         {Object.entries(groupedData).map(([label, items]) => (
           <li key={label}>
             <p className="mb-2 text-center text-sm font-semibold text-white">

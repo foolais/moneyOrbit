@@ -13,7 +13,7 @@ const ContainerHomeTransaction = async () => {
   const { data: transactions, error } = await supabase
     .from("transactions")
     .select("*")
-    .order("date", { ascending: false })
+    .order("created_at", { ascending: false })
     .limit(20);
 
   if (error) {
@@ -93,8 +93,8 @@ const ContainerHomeTransaction = async () => {
               {label}
             </p>
             <ul className="space-y-2">
-              {items.map((item, index) => (
-                <li key={index}>
+              {items.map((item) => (
+                <li key={item.id}>
                   <CardHomeTransaction
                     id={item.id}
                     type={item.type}

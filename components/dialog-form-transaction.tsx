@@ -72,6 +72,7 @@ const DialogFormTransaction = ({
   const [openDialog, setOpenDialog] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [initialAmount, setInitialAmount] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const form = useForm<TransactionSchemaType>({
     resolver: zodResolver(TransactionSchema),
@@ -198,6 +199,24 @@ const DialogFormTransaction = ({
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from("transactions")
+        .delete()
+        .eq("id", transactionId);
+
+      if (error) throw error;
+
+      toast.success("transaction deleted successfully");
+      setOpenDialog(false);
+      router.refresh();
+    } catch (error) {
+      console.log("error deleting transaction", error);
+      toast.error("error deleting transaction");
+    }
+  };
+
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await form.handleSubmit(onSubmit)(e);
@@ -259,7 +278,21 @@ const DialogFormTransaction = ({
               {mode === "edit" && "fill the form to change your transaction"}
             </DialogDescription>
           </DialogHeader>
-          {isSubmitting ? (
+          {isDeleting ? (
+            <div className="flex min-h-[48vh] flex-col items-center justify-center">
+              <span className="stroke-text text-destructive animate-pulse text-xl font-semibold tracking-widest">
+                deleting transaction...
+              </span>
+              <Image
+                src={AstronoutRunMoney}
+                alt="Astronout on the moon"
+                height={350}
+                width={350}
+                loading="eager"
+                className="flex items-center justify-center object-cover"
+              />
+            </div>
+          ) : isSubmitting ? (
             <div className="flex min-h-[52vh] flex-col items-center justify-center">
               <Image
                 src={AstronoutRunMoney}
@@ -614,11 +647,15 @@ const DialogFormTransaction = ({
             </FieldGroup>
           )}
           <div
-            className={`mt-4 flex items-center justify-between ${isSubmitting && "hidden"}`}
+            className={`mt-4 flex items-center justify-between ${(isSubmitting || isDeleting) && "hidden"}`}
           >
             <div>
               {isEdit && (
-                <Button type="button" variant="destructive">
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => setIsDeleting(true)}
+                >
                   <span>delete</span>
                   <Trash />
                 </Button>
@@ -634,6 +671,26 @@ const DialogFormTransaction = ({
               {isSubmitting ? <Loader className="animate-spin" /> : <Send />}
             </Button>
           </div>
+          {isDeleting && (
+            <div className="mt-4 flex items-center justify-between gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setIsDeleting(false)}
+                disabled={isSubmitting}
+              >
+                back
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={isSubmitting}
+              >
+                delete <Trash className="ml-2" />
+              </Button>
+            </div>
+          )}
         </form>
       </DialogContent>
     </Dialog>

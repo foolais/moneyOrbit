@@ -7,13 +7,14 @@ import Image from "next/image";
 import WorkingLaptop from "@/public/working-laptop.webp";
 import AstronoutMoon from "@/public/astronout-moon.webp";
 import AstronoutRocket from "@/public/astronout-rocket.webp";
-import { ArrowLeftRight, Send, Sparkles } from "lucide-react";
+import { ArrowLeftRight, Loader2Icon, Send, Sparkles } from "lucide-react";
 import { useState } from "react";
 import FormRegister from "@/components/form-register";
 import Title from "@/components/title";
 
 const AuthPage = () => {
   const [isLoginForm, setIsLoginForm] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   return (
     <div className="relative flex h-dvh w-screen flex-col items-center justify-center overflow-hidden">
@@ -36,7 +37,11 @@ const AuthPage = () => {
             </CardTitle>
           </div>
           <CardContent>
-            {isLoginForm ? <FormLogin /> : <FormRegister />}
+            {isLoginForm ? (
+              <FormLogin onSubmitting={(val) => setIsSubmitting(val)} />
+            ) : (
+              <FormRegister onSubmitting={(val) => setIsSubmitting(val)} />
+            )}
           </CardContent>
           <CardFooter className="mb-2 w-full p-2">
             <Button
@@ -44,7 +49,12 @@ const AuthPage = () => {
               variant="secondary"
               className="hover:bg-accent/90 mx-auto w-1/2 cursor-pointer rounded-full px-4 py-2 hover:scale-105"
             >
-              {isLoginForm ? "login" : "register"} <Send className="size-5" />
+              {isSubmitting ? "loading..." : isLoginForm ? "login" : "register"}
+              {isSubmitting ? (
+                <Loader2Icon className="size-4 animate-spin" />
+              ) : (
+                <Send className="size-5" />
+              )}
             </Button>
           </CardFooter>
         </Card>

@@ -32,9 +32,8 @@ const ProfilePage = () => {
             </div>
           </div>
           <div className="flex flex-col gap-3 border-t-2 pt-4">
-            <p className="text-center text-sm font-semibold">wealth overview</p>
             <div className="text-center">
-              <p className="text-muted-foreground text-xs">net</p>
+              <p className="text-muted-foreground text-xs">net balance</p>
               <p className="text-secondary text-xl font-bold">
                 {formatPrice(randomInt(1000000, 10000000))}
               </p>

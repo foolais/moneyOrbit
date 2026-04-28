@@ -1,8 +1,7 @@
 import AnalyticDateSpending from "@/components/analytic-date-spending";
-import AnalyticSpending from "@/components/analytic-spending";
+import ContainerAnalyticSpending from "@/components/container-analytic-spending";
 import SidebarAnalytic from "@/components/sidebar-analytic";
 import WealthAnalytic from "@/components/wealth-analytic";
-import { dummyDataTransaction } from "@/lib/data";
 
 const AnalyticPage = () => {
   return (
@@ -13,11 +12,7 @@ const AnalyticPage = () => {
         <SidebarAnalytic />
       </section>
       <section className="mt-6 space-y-4">
-        <AnalyticSpending
-          transaction={dummyDataTransaction[2]}
-          type="expense"
-        />
-        <AnalyticSpending transaction={dummyDataTransaction[1]} type="income" />
+        <ContainerAnalyticSpending />
       </section>
     </main>
   );

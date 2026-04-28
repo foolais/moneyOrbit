@@ -152,7 +152,6 @@ const DialogFormTransaction = ({
     try {
       if (isEdit) {
         try {
-          console.log({ data });
           const { error } = await supabase
             .from("transactions")
             .update({
@@ -217,6 +216,7 @@ const DialogFormTransaction = ({
       toast.success("transaction deleted successfully");
       setOpenDialog(false);
       router.refresh();
+      onSuccess?.();
     } catch (error) {
       console.log("error deleting transaction", error);
       toast.error("error deleting transaction");

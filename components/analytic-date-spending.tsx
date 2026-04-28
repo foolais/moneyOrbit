@@ -61,7 +61,7 @@ const AnalyticDateSpending = async () => {
               <p className="text-muted-foreground text-sm">date</p>
               <p className="text-lg font-semibold">
                 {result?.date
-                  ? format(new Date(result.date), "MMMM dd, yyyy")
+                  ? format(new Date(result.date), "dd MMM yyyy")
                   : "N/A"}
               </p>
             </div>

@@ -65,7 +65,6 @@ const TableTransaction = () => {
       let query = supabase
         .from("transactions")
         .select("*", { count: "exact" })
-
         .eq("user_id", user?.id);
 
       if (searchUrl) {

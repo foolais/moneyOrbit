@@ -19,6 +19,7 @@ const CardHomeTransaction = ({
     <DialogFormTransaction
       mode="edit"
       transactionId={id}
+      onSuccess={() => window.location.reload()}
       trigger={
         <button type="button" className="w-full">
           <Card

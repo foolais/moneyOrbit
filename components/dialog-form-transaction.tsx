@@ -192,6 +192,7 @@ const DialogFormTransaction = ({
           toast.success("transaction created successfully");
           form.reset();
           setOpenDialog(false);
+          onSuccess?.();
           router.refresh();
         } catch (error) {
           console.log("Error creating transaction", error);

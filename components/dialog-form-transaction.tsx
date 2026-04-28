@@ -158,6 +158,7 @@ const DialogFormTransaction = ({
               ...data,
               description: data.description || null,
               image: data.image || null,
+              date: data.date,
             })
             .eq("id", transactionId);
 
@@ -443,7 +444,9 @@ const DialogFormTransaction = ({
                             selected={date}
                             onSelect={(selectedDate) => {
                               if (selectedDate) {
-                                field.onChange(selectedDate.toISOString());
+                                field.onChange(
+                                  format(selectedDate, "yyyy-MM-dd"),
+                                );
                               }
                             }}
                           />

@@ -32,8 +32,6 @@ const SidebarAnalytic = () => {
     other: 0,
   });
 
-  console.log({ styleTransactionData });
-
   useEffect(() => {
     const fetchStyleTransactionData = async () => {
       try {

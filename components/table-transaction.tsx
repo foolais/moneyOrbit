@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  dummyDataTransaction,
-  ITEMS_PER_PAGE,
-  styleTransactionConfig,
-} from "@/lib/data";
+import { ITEMS_PER_PAGE, styleTransactionConfig } from "@/lib/data";
 import { Button } from "./ui/button";
 import {
   Table,
@@ -15,7 +11,7 @@ import {
   TableRow,
 } from "./ui/table";
 import { formatPrice, getPagination } from "@/lib/utils";
-import { format, isValid, parse } from "date-fns";
+import { format } from "date-fns";
 import Image from "next/image";
 import DialogFormTransaction from "./dialog-form-transaction";
 import {
@@ -27,7 +23,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./ui/pagination";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
@@ -47,6 +43,7 @@ const TableTransaction = () => {
 
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
   const [totalData, setTotalData] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
 
   const totalPages = Math.ceil(totalData / ITEMS_PER_PAGE);
@@ -120,120 +117,139 @@ const TableTransaction = () => {
       isMounted = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, searchUrl, typeUrl, styleUrl, fromUrl, toUrl]);
+  }, [page, searchUrl, typeUrl, styleUrl, fromUrl, toUrl, refreshKey]);
 
   return (
     <div className="w-full">
       <Button variant="secondary" className="rounded-xl" size="sm">
         table transaction
       </Button>
-      <Table className="my-4">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-8">no</TableHead>
-            <TableHead>date</TableHead>
-            <TableHead>activity</TableHead>
-            <TableHead className={isShowMd}>amount</TableHead>
-            <TableHead className={isShowMd}>merchant</TableHead>
-            <TableHead>type</TableHead>
-            <TableHead className={isShowLg}>style</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {transactions.map((item, index) => (
-            <DialogFormTransaction
-              key={(page - 1) * ITEMS_PER_PAGE + index + 1}
-              mode="edit"
-              transactionId={item.id}
-              trigger={
-                <TableRow
-                  className={`${styleTransactionConfig[item.style].bgColor} hover:${styleTransactionConfig[item.style].textColor.replace("text", "bg")} cursor-pointer`}
-                >
-                  <TableCell>
-                    {(page - 1) * ITEMS_PER_PAGE + index + 1}
-                  </TableCell>
-                  <TableCell>{format(item.date, "dd MMM yyyy")}</TableCell>
-                  <TableCell className="truncate">{item.activity}</TableCell>
-                  <TableCell className={isShowMd}>
-                    {formatPrice(item.amount)}
-                  </TableCell>
-                  <TableCell className={isShowMd}>{item.merchant}</TableCell>
-                  <TableCell className="p-0">
-                    <span
-                      className={`${
-                        item.type === "income" ? "bg-green-500" : "bg-red-500"
-                      } py-.5 rounded-md px-2 text-white`}
+      {isFetching ? (
+        <div className="bg-muted my-4 flex h-40 animate-pulse items-center justify-center rounded p-4" />
+      ) : transactions.length === 0 ? (
+        <div className="my-10 flex items-center justify-center">
+          <p className="text-muted-foreground">no transactions found</p>
+        </div>
+      ) : (
+        <>
+          <Table className="my-4">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-8">no</TableHead>
+                <TableHead>date</TableHead>
+                <TableHead>activity</TableHead>
+                <TableHead className={isShowMd}>amount</TableHead>
+                <TableHead className={isShowMd}>merchant</TableHead>
+                <TableHead>type</TableHead>
+                <TableHead className={isShowLg}>style</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {transactions.map((item, index) => (
+                <DialogFormTransaction
+                  key={(page - 1) * ITEMS_PER_PAGE + index + 1}
+                  mode="edit"
+                  transactionId={item.id}
+                  onSuccess={() => setRefreshKey((prev) => prev + 1)}
+                  trigger={
+                    <TableRow
+                      className={`${styleTransactionConfig[item.style].bgColor} hover:${styleTransactionConfig[item.style].textColor.replace("text", "bg")} cursor-pointer`}
                     >
-                      {item.type}
-                    </span>
-                  </TableCell>
-                  <TableCell
-                    className={`${isShowLg} items-center gap-1 lg:flex`}
-                  >
-                    <Image
-                      src={styleTransactionConfig[item.style].image}
-                      alt={item.style}
-                      width={30}
-                      height={30}
-                      className="object-cover"
-                    />
-                    {item.style}
-                  </TableCell>
-                </TableRow>
-              }
-            />
-          ))}
-        </TableBody>
-      </Table>
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => handlePageChange(Math.max(1, page - 1))}
-              className={
-                page === 1
-                  ? "pointer-events-none text-white opacity-50"
-                  : "cursor-pointer text-white"
-              }
-            />
-          </PaginationItem>
-          {pages.map((p, i) => {
-            if (p === "...") {
-              return (
-                <PaginationItem key={`ellipsis-${i}`}>
-                  <PaginationEllipsis />
-                </PaginationItem>
-              );
-            }
-
-            return (
-              <PaginationItem key={p}>
-                <PaginationLink
-                  onClick={() => handlePageChange(+p)}
-                  className={`cursor-pointer ${
-                    page === p
-                      ? "bg-secondary text-secondary-foreground"
-                      : "text-white"
-                  }`}
-                >
-                  {p}
-                </PaginationLink>
+                      <TableCell>
+                        {(page - 1) * ITEMS_PER_PAGE + index + 1}
+                      </TableCell>
+                      <TableCell>{format(item.date, "dd MMM yyyy")}</TableCell>
+                      <TableCell className="truncate">
+                        {item.activity}
+                      </TableCell>
+                      <TableCell className={isShowMd}>
+                        {formatPrice(item.amount)}
+                      </TableCell>
+                      <TableCell className={isShowMd}>
+                        {item.merchant}
+                      </TableCell>
+                      <TableCell className="p-0">
+                        <span
+                          className={`${
+                            item.type === "income"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          } py-.5 rounded-md px-2 text-white`}
+                        >
+                          {item.type}
+                        </span>
+                      </TableCell>
+                      <TableCell
+                        className={`${isShowLg} items-center gap-1 lg:flex`}
+                      >
+                        <Image
+                          src={styleTransactionConfig[item.style].image}
+                          alt={item.style}
+                          width={30}
+                          height={30}
+                          className="object-cover"
+                        />
+                        {item.style}
+                      </TableCell>
+                    </TableRow>
+                  }
+                />
+              ))}
+            </TableBody>
+          </Table>
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => handlePageChange(Math.max(1, page - 1))}
+                  className={
+                    page === 1
+                      ? "pointer-events-none text-white opacity-50"
+                      : "cursor-pointer text-white"
+                  }
+                />
               </PaginationItem>
-            );
-          })}
-          <PaginationItem
-            className={
-              page === totalPages
-                ? "pointer-events-none text-white opacity-50"
-                : "cursor-pointer text-white"
-            }
-          >
-            <PaginationNext
-              onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+              {pages.map((p, i) => {
+                if (p === "...") {
+                  return (
+                    <PaginationItem key={`ellipsis-${i}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  );
+                }
+
+                return (
+                  <PaginationItem key={p}>
+                    <PaginationLink
+                      onClick={() => handlePageChange(+p)}
+                      className={`cursor-pointer ${
+                        page === p
+                          ? "bg-secondary text-secondary-foreground"
+                          : "text-white"
+                      }`}
+                    >
+                      {p}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+              <PaginationItem
+                className={
+                  page === totalPages
+                    ? "pointer-events-none text-white opacity-50"
+                    : "cursor-pointer text-white"
+                }
+              >
+                <PaginationNext
+                  onClick={() =>
+                    handlePageChange(Math.min(totalPages, page + 1))
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </>
+      )}
     </div>
   );
 };

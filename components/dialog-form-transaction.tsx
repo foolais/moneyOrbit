@@ -20,7 +20,7 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
 import Image from "next/image";
@@ -59,12 +59,14 @@ type IDialogFormTransaction = {
   mode?: "create" | "edit";
   trigger?: React.ReactNode;
   transactionId?: string;
+  onSuccess?: () => void;
 };
 
 const DialogFormTransaction = ({
   mode = "create",
   trigger,
   transactionId,
+  onSuccess,
 }: IDialogFormTransaction) => {
   const isEdit = mode === "edit";
   const router = useRouter();
@@ -72,6 +74,7 @@ const DialogFormTransaction = ({
   const [openDialog, setOpenDialog] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [initialAmount, setInitialAmount] = useState(0);
+  const [isDeleteView, setIsDeleteView] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const form = useForm<TransactionSchemaType>({
@@ -109,11 +112,11 @@ const DialogFormTransaction = ({
       }
     };
 
-    if (isEdit && transactionId) {
+    if (isEdit && transactionId && openDialog) {
+      form.reset();
       fetchTransaction();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEdit]);
+  }, [isEdit, transactionId, openDialog, form]);
 
   const setColor = (label: string) => {
     return label.includes("+")
@@ -164,6 +167,7 @@ const DialogFormTransaction = ({
           toast.success("transaction updated successfully");
           form.reset();
           router.refresh();
+          onSuccess?.();
           setOpenDialog(false);
         } catch (error) {
           console.log("Error updating transaction", error);
@@ -201,6 +205,7 @@ const DialogFormTransaction = ({
 
   const handleDelete = async () => {
     try {
+      setIsDeleting(true);
       const { error } = await supabase
         .from("transactions")
         .delete()
@@ -214,6 +219,9 @@ const DialogFormTransaction = ({
     } catch (error) {
       console.log("error deleting transaction", error);
       toast.error("error deleting transaction");
+      setIsDeleting(false);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -224,6 +232,7 @@ const DialogFormTransaction = ({
 
   const isSubmitting = form.formState.isSubmitting || isUploadingImage;
   const isDirty = isEdit && !form.formState.isDirty;
+  const imagePreview = useWatch({ control: form.control, name: "image" });
 
   const isDisabled = isSubmitting;
 
@@ -278,10 +287,12 @@ const DialogFormTransaction = ({
               {mode === "edit" && "fill the form to change your transaction"}
             </DialogDescription>
           </DialogHeader>
-          {isDeleting ? (
+          {isDeleteView ? (
             <div className="flex min-h-[48vh] flex-col items-center justify-center">
               <span className="stroke-text text-destructive animate-pulse text-xl font-semibold tracking-widest">
-                deleting transaction...
+                {isDeleting
+                  ? "deleting transaction..."
+                  : "wanna delete this transaction?"}
               </span>
               <Image
                 src={AstronoutRunMoney}
@@ -549,8 +560,7 @@ const DialogFormTransaction = ({
                       <FieldLabel>
                         {field.value ? "image (change or remove)" : "Image"}
                       </FieldLabel>
-
-                      {!field.value ? (
+                      {!imagePreview ? (
                         <CldUploadWidget
                           uploadPreset="money-orbit"
                           options={{
@@ -647,14 +657,15 @@ const DialogFormTransaction = ({
             </FieldGroup>
           )}
           <div
-            className={`mt-4 flex items-center justify-between ${(isSubmitting || isDeleting) && "hidden"}`}
+            className={`mt-4 flex items-center justify-between ${(isSubmitting || isDeleteView) && "hidden"}`}
           >
             <div>
               {isEdit && (
                 <Button
                   type="button"
                   variant="destructive"
-                  onClick={() => setIsDeleting(true)}
+                  className="cursor-pointer"
+                  onClick={() => setIsDeleteView(true)}
                 >
                   <span>delete</span>
                   <Trash />
@@ -671,12 +682,13 @@ const DialogFormTransaction = ({
               {isSubmitting ? <Loader className="animate-spin" /> : <Send />}
             </Button>
           </div>
-          {isDeleting && (
+          {isDeleteView && (
             <div className="mt-4 flex items-center justify-between gap-2">
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => setIsDeleting(false)}
+                onClick={() => setIsDeleteView(false)}
+                className="cursor-pointer"
                 disabled={isSubmitting}
               >
                 back
@@ -684,6 +696,7 @@ const DialogFormTransaction = ({
               <Button
                 type="button"
                 variant="destructive"
+                className="cursor-pointer"
                 onClick={handleDelete}
                 disabled={isSubmitting}
               >

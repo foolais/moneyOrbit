@@ -22,7 +22,7 @@ const AnalyticSpending = ({
       <Card className="w-full rounded-2xl shadow-md transition-all duration-300 hover:scale-105 xl:w-sm">
         <CardContent className="flex flex-col gap-2">
           <div className="text-muted-foreground flex items-center justify-between text-sm">
-            <p>{format(transaction.date, "dd MMM yyyy")}</p>
+            <p>{format(transaction?.date, "dd MMM yyyy")}</p>
             <Button
               variant={type === "expense" ? "destructive" : "default"}
               size="sm"

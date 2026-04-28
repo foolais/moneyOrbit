@@ -12,8 +12,6 @@ export type ITransaction = {
 
 export type GroupedTransactions = Record<string, ITransaction[]>;
 
-export type IFilterAnalytic = "all" | "income" | "expense";
-
 export type IStyleTransaction =
   | "travel"
   | "gaming"

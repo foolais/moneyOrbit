@@ -17,7 +17,7 @@ const AnalyticPage = () => {
           transaction={dummyDataTransaction[2]}
           type="expense"
         />
-        <AnalyticSpending transaction={dummyDataTransaction[5]} type="income" />
+        <AnalyticSpending transaction={dummyDataTransaction[1]} type="income" />
       </section>
     </main>
   );

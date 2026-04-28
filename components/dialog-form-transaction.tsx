@@ -163,8 +163,8 @@ const DialogFormTransaction = ({
 
           toast.success("transaction updated successfully");
           form.reset();
-          setOpenDialog(false);
           router.refresh();
+          setOpenDialog(false);
         } catch (error) {
           console.log("Error updating transaction", error);
           toast.error("Error updating transaction");

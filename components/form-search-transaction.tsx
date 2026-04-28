@@ -29,7 +29,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
 import { CalendarIcon, SearchIcon, TimerResetIcon } from "lucide-react";
 import { Calendar } from "./ui/calendar";
-import { formatRangeDate } from "@/lib/utils";
+import { formatRangeDate, parseSafeDate } from "@/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { IStyleTransaction } from "@/lib/type";
 import { format } from "date-fns";
@@ -55,8 +55,8 @@ const FormSearchTransaction = () => {
       search: searchUrl,
       type: typeUrl as "all" | "income" | "expense",
       rangeDate: {
-        from: fromUrl ? new Date(fromUrl) : undefined,
-        to: toUrl ? new Date(toUrl) : undefined,
+        from: parseSafeDate(fromUrl),
+        to: parseSafeDate(toUrl),
       },
       style: styleUrl as IStyleTransaction | "all",
     },
@@ -84,15 +84,11 @@ const FormSearchTransaction = () => {
     }
 
     if (data.rangeDate?.from) {
-      params.set("from", format(data.rangeDate.from, "dd-MM-yyyy"));
-    } else {
-      params.delete("from");
+      params.set("from", format(data.rangeDate.from, "yyyy-MM-dd"));
     }
 
     if (data.rangeDate?.to) {
-      params.set("to", format(data.rangeDate.to, "dd-MM-yyyy"));
-    } else {
-      params.delete("to");
+      params.set("to", format(data.rangeDate.to, "yyyy-MM-dd"));
     }
 
     params.delete("page");

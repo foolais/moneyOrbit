@@ -12,11 +12,19 @@ import { Suspense } from "react";
 const ContainerHomeTransaction = async () => {
   const supabase = await createClient();
 
+  const { data: session } = await supabase.auth.getSession();
+
+  if (!session?.session) {
+    toast.error("You must be logged in to view transactions");
+    return <div />;
+  }
+
   const { data: transactions, error } = await supabase
     .from("transactions")
     .select("*")
-    .order("created_at", { ascending: false })
-    .limit(20);
+    .order("date", { ascending: false })
+    .limit(20)
+    .eq("user_id", session.session.user.id);
 
   if (error) {
     console.log("Error fetching transactions", error);

@@ -15,7 +15,7 @@ import {
   TableRow,
 } from "./ui/table";
 import { formatPrice, getPagination } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, isValid, parse } from "date-fns";
 import Image from "next/image";
 import DialogFormTransaction from "./dialog-form-transaction";
 import {
@@ -29,28 +29,70 @@ import {
 } from "./ui/pagination";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+import { ITransaction } from "@/lib/type";
 
 const TableTransaction = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  const pageFromUrl = +(searchParams.get("page") || 1);
+  const page = +(searchParams.get("page") || 1);
+  const searchUrl = searchParams.get("search") || "";
+  const typeUrl = searchParams.get("type") || "all";
+  const styleUrl = searchParams.get("style") || "all";
+  const fromUrl = searchParams.get("from");
+  const toUrl = searchParams.get("to");
 
-  const [page, setPage] = useState(pageFromUrl);
+  const [transactions, setTransactions] = useState<ITransaction[]>([]);
+  const [totalData, setTotalData] = useState(0);
+  const [isFetching, setIsFetching] = useState(false);
 
-  const totalPages = Math.ceil(dummyDataTransaction.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(totalData / ITEMS_PER_PAGE);
   const pages = getPagination(page, totalPages);
 
   const isShowMd = "hidden md:table-cell";
   const isShowLg = "hidden lg:table-cell";
 
-  const pageRef = useRef(pageFromUrl);
+  const fetchTransactions = async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) toast.error("You must be logged in to view transactions");
 
-  const paginatedData = dummyDataTransaction.slice(
-    (page - 1) * ITEMS_PER_PAGE,
-    page * ITEMS_PER_PAGE,
-  );
+      const from = (page - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+
+      let query = supabase
+        .from("transactions")
+        .select("*", { count: "exact" })
+
+        .eq("user_id", user?.id);
+
+      if (searchUrl) {
+        query.or(`activity.ilike.%${searchUrl}%,merchant.ilike.%${searchUrl}%`);
+      }
+      if (typeUrl !== "all") query = query.eq("type", typeUrl);
+      if (styleUrl !== "all") query = query.eq("style", styleUrl);
+      if (fromUrl) query = query.gte("date", fromUrl);
+      if (toUrl) query = query.lte("date", toUrl);
+
+      const { data, count, error } = await query
+        .order("date", {
+          ascending: false,
+        })
+        .range(from, to);
+
+      if (error) throw error;
+
+      setTransactions(data as ITransaction[]);
+      setTotalData(count || 0);
+    } catch (error) {
+      console.log("error fetching transaction", error);
+    }
+  };
 
   const handlePageChange = (newPage: number | "next" | "previous") => {
     const params = new URLSearchParams(searchParams.toString());
@@ -67,11 +109,18 @@ const TableTransaction = () => {
   };
 
   useEffect(() => {
-    if (pageRef.current !== pageFromUrl) {
-      setPage(pageFromUrl);
-      pageRef.current = pageFromUrl;
-    }
-  }, [pageFromUrl]);
+    let isMounted = true;
+    const load = async () => {
+      setIsFetching(true);
+      await fetchTransactions();
+      if (isMounted) setIsFetching(false);
+    };
+    load();
+    return () => {
+      isMounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, searchUrl, typeUrl, styleUrl, fromUrl, toUrl]);
 
   return (
     <div className="w-full">
@@ -91,10 +140,11 @@ const TableTransaction = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {paginatedData.map((item, index) => (
+          {transactions.map((item, index) => (
             <DialogFormTransaction
               key={(page - 1) * ITEMS_PER_PAGE + index + 1}
               mode="edit"
+              transactionId={item.id}
               trigger={
                 <TableRow
                   className={`${styleTransactionConfig[item.style].bgColor} hover:${styleTransactionConfig[item.style].textColor.replace("text", "bg")} cursor-pointer`}
@@ -174,7 +224,7 @@ const TableTransaction = () => {
           <PaginationItem
             className={
               page === totalPages
-                ? "pointer-events-none opacity-50"
+                ? "pointer-events-none text-white opacity-50"
                 : "cursor-pointer text-white"
             }
           >

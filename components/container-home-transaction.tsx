@@ -6,6 +6,8 @@ import CardHomeTransaction from "./card-home-transaction";
 import DialogFormTransaction from "./dialog-form-transaction";
 import { createClient } from "@/lib/supabase-server";
 import { toast } from "sonner";
+import HomeTranscationSkeleton from "./home-transaction-skeleton";
+import { Suspense } from "react";
 
 const ContainerHomeTransaction = async () => {
   const supabase = await createClient();
@@ -81,35 +83,37 @@ const ContainerHomeTransaction = async () => {
           <DialogFormTransaction />
         </div>
       </header>
-      <ul className="mx-auto mb-8 space-y-4 md:w-11/12">
-        {transactions.length === 0 && (
-          <p className="text-muted-foreground text-center text-sm">
-            no transactions found.
-          </p>
-        )}
-        {Object.entries(groupedData).map(([label, items]) => (
-          <li key={label}>
-            <p className="mb-2 text-center text-sm font-semibold text-white">
-              {label}
+      <Suspense fallback={<HomeTranscationSkeleton />}>
+        <ul className="mx-auto mb-8 space-y-4 md:w-11/12">
+          {transactions.length === 0 && (
+            <p className="text-muted-foreground text-center text-sm">
+              no transactions found.
             </p>
-            <ul className="space-y-2">
-              {items.map((item) => (
-                <li key={item.id}>
-                  <CardHomeTransaction
-                    id={item.id}
-                    type={item.type}
-                    style={item.style}
-                    activity={item.activity}
-                    amount={item.amount}
-                    merchant={item.merchant}
-                    date={item.date}
-                  />
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+          )}
+          {Object.entries(groupedData).map(([label, items]) => (
+            <li key={label}>
+              <p className="mb-2 text-center text-sm font-semibold text-white">
+                {label}
+              </p>
+              <ul className="space-y-2">
+                {items.map((item) => (
+                  <li key={item.id}>
+                    <CardHomeTransaction
+                      id={item.id}
+                      type={item.type}
+                      style={item.style}
+                      activity={item.activity}
+                      amount={item.amount}
+                      merchant={item.merchant}
+                      date={item.date}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </Suspense>
     </div>
   );
 };

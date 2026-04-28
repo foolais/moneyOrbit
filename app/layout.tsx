@@ -18,7 +18,7 @@ const inconsolata = Inconsolata({
 export const metadata: Metadata = {
   title: "Money Orbit",
   description:
-    "A personal finance dashboard built with Next.js, Tailwind CSS, and TypeScript. Track your expenses, visualize your spending habits, and manage your budget all in one place.",
+    "Track your expenses, visualize your spending habits, and manage your budget all in one place.",
 };
 
 export default function RootLayout({

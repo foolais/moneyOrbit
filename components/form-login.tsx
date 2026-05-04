@@ -57,6 +57,7 @@ const FormLogin = ({
 
   return (
     <form
+      method="post"
       id="login-form"
       onSubmit={form.handleSubmit(onSubmit)}
       className="flex w-full flex-col gap-2"

@@ -1,4 +1,5 @@
 import AnalyticDateSpending from "@/components/analytic-date-spending";
+import AnalyticDayTransaction from "@/components/analytic-day-transaction";
 import ContainerAnalyticSpending from "@/components/container-analytic-spending";
 import SidebarAnalytic from "@/components/sidebar-analytic";
 import WealthAnalytic from "@/components/wealth-analytic";
@@ -8,6 +9,7 @@ const AnalyticPage = () => {
     <main className="mx-auto flex flex-col md:my-4 md:flex-row md:justify-center md:gap-5 xl:w-11/12 xl:gap-10 2xl:max-w-7xl">
       <section className="mt-4 space-y-4 md:w-md lg:w-lg">
         <WealthAnalytic />
+        <AnalyticDayTransaction />
         <AnalyticDateSpending />
         <SidebarAnalytic />
       </section>

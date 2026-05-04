@@ -46,6 +46,7 @@ const AuthPage = () => {
           <CardFooter className="mb-2 w-full p-2">
             <Button
               form={isLoginForm ? "login-form" : "register-form"}
+              type="submit"
               variant="secondary"
               className="hover:bg-accent/90 mx-auto w-1/2 cursor-pointer rounded-full px-4 py-2 hover:scale-105"
             >

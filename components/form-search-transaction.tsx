@@ -85,10 +85,14 @@ const FormSearchTransaction = () => {
 
     if (data.rangeDate?.from) {
       params.set("from", format(data.rangeDate.from, "yyyy-MM-dd"));
+    } else if (!data.rangeDate?.from) {
+      params.delete("from");
     }
 
     if (data.rangeDate?.to) {
       params.set("to", format(data.rangeDate.to, "yyyy-MM-dd"));
+    } else if (!data.rangeDate?.to) {
+      params.delete("to");
     }
 
     params.delete("page");

@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import { formatPrice, getPagination } from "@/lib/utils";
+import { formatPrice, getPagination, truncateText } from "@/lib/utils";
 import { format } from "date-fns";
 import Image from "next/image";
 import DialogFormTransaction from "./dialog-form-transaction";
@@ -119,7 +119,7 @@ const TableTransaction = () => {
   }, [page, searchUrl, typeUrl, styleUrl, fromUrl, toUrl, refreshKey]);
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-87 sm:max-w-full">
       <Button variant="secondary" className="rounded-xl" size="sm">
         table transaction
       </Button>
@@ -159,13 +159,13 @@ const TableTransaction = () => {
                       </TableCell>
                       <TableCell>{format(item.date, "dd MMM yyyy")}</TableCell>
                       <TableCell className="truncate">
-                        {item.activity}
+                        {truncateText(item.activity, 30)}
                       </TableCell>
                       <TableCell className={isShowMd}>
                         {formatPrice(item.amount)}
                       </TableCell>
                       <TableCell className={isShowMd}>
-                        {item.merchant}
+                        {truncateText(item.merchant, 20)}
                       </TableCell>
                       <TableCell className="p-0">
                         <span

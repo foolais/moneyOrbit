@@ -7,10 +7,10 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
   const supabase = await createClient();
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
     redirect("/auth");
   }
 

@@ -4,10 +4,10 @@ import { redirect } from "next/navigation";
 const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
   const supabse = await createClient();
   const {
-    data: { session },
-  } = await supabse.auth.getSession();
+    data: { user },
+  } = await supabse.auth.getUser();
 
-  if (session) redirect("/home");
+  if (user) redirect("/home");
 
   return <div>{children}</div>;
 };

@@ -14,7 +14,7 @@ const AnalyticDayTransaction = async () => {
   const { data, error } = await supabase
     .from("transactions")
     .select("amount, date, type", { count: "exact" })
-    .eq("date", format(new Date(), "dd MMM yyyy"))
+    .eq("date", format(new Date(), "yyyy-MM-dd"))
     .eq("user_id", user.id)
     .order("date", { ascending: false });
 

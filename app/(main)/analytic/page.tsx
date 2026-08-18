@@ -10,8 +10,8 @@ const AnalyticPage = () => {
       <section className="mt-4 space-y-4 md:w-md lg:w-lg">
         <WealthAnalytic />
         <AnalyticDayTransaction />
-        <AnalyticDateSpending />
         <SidebarAnalytic />
+        <AnalyticDateSpending />
       </section>
       <section className="mt-6 space-y-4">
         <ContainerAnalyticSpending />

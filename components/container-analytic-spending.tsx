@@ -1,6 +1,8 @@
 import AnalyticSpending from "./analytic-spending";
 import { createClient } from "@/lib/supabase-server";
 
+import { format } from "date-fns";
+
 const ContainerAnalyticSpending = async () => {
   const supabase = await createClient();
   const {
@@ -8,12 +10,15 @@ const ContainerAnalyticSpending = async () => {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
+  const today = format(new Date(), "yyyy-MM-dd");
+
   const { data: expenseTransaction } = await supabase
     .from("transactions")
     .select("*")
     .order("amount", { ascending: false })
     .eq("type", "expense")
     .eq("user_id", user.id)
+    .eq("date", today)
     .limit(1)
     .single();
 
@@ -23,6 +28,7 @@ const ContainerAnalyticSpending = async () => {
     .order("amount", { ascending: false })
     .eq("type", "income")
     .eq("user_id", user.id)
+    .eq("date", today)
     .limit(1)
     .single();
 

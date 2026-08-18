@@ -7,6 +7,7 @@ import { formatPrice } from "@/lib/utils";
 import { Card, CardContent } from "./ui/card";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { format } from "date-fns";
 
 interface IStyleTransactionData {
   travel: number;
@@ -44,7 +45,8 @@ const SidebarAnalytic = () => {
         const { data: transactions, error } = await supabase
           .from("transactions")
           .select("amount, style")
-          .eq("user_id", user?.id);
+          .eq("user_id", user?.id)
+          .eq("date", format(new Date(), "yyyy-MM-dd"));
         if (error) throw error;
 
         const totals = transactions.reduce(

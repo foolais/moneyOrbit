@@ -80,7 +80,7 @@ const DialogFormTransaction = ({
   const form = useForm<TransactionSchemaType>({
     resolver: zodResolver(TransactionSchema),
     defaultValues: {
-      type: "income",
+      type: "expense",
       activity: "",
       amount: 0,
       date: new Date().toISOString(),

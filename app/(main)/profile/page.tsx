@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase-server";
 import LogoutButton from "@/components/logout-button";
 import { Suspense } from "react";
 import ProfileSkeleton from "@/components/profile-skeleton";
+import InstallAppButton from "@/components/install-app-button";
 
 const ProfilePage = async () => {
   const supabase = await createClient();
@@ -87,7 +88,8 @@ const ProfilePage = async () => {
               </div>
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-2">
+            <InstallAppButton />
             <LogoutButton />
           </CardFooter>
         </Card>

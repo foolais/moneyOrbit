@@ -19,6 +19,18 @@ export const metadata: Metadata = {
   title: "Money Orbit",
   description:
     "Track your expenses, visualize your spending habits, and manage your budget all in one place.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Money Orbit",
+  },
+};
+
+export const viewport = {
+  themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
